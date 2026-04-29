@@ -1,0 +1,14 @@
+﻿.env
+*.exe
+openspec
+.opencode
+.claude
+_tmp_code_endpoints.json
+funcs.csv
+results.txt
+!.opencode\skills\api-doc-alignment-check
+!.opencode\skills\api-sync
+.playwright
+.playwright-cli
+AGENTS.md
+xxx.json
