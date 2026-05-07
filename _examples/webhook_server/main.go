@@ -56,23 +56,23 @@ func main() {
 			return
 		}
 
-		slog.InfoContext(ctx, "收到 webhook", "event", evt.Event, "id", evt.ID)
+		slog.InfoContext(ctx, "收到 webhook", "event", evt.Name, "id", evt.ID)
 
-		// 根据事件类型处理（使用 UnmarshalData 泛型解析具体负载）
-		switch evt.Event {
-		case "payment_intent.succeeded":
+		// 根据事件类型处理（使用 UnmarshalDataObject 泛型解析具体负载）
+		switch evt.Name {
+		case webhook.EventNamePaymentIntentSucceeded:
 			type PaymentIntentData struct {
 				ID       string  `json:"id"`
 				Status   string  `json:"status"`
 				Amount   float64 `json:"amount"`
 				Currency string  `json:"currency"`
 			}
-			data, err := webhook.UnmarshalData[PaymentIntentData](evt)
+			data, err := webhook.UnmarshalDataObject[PaymentIntentData](evt)
 			if err == nil {
 				slog.InfoContext(ctx, "PaymentIntent 成功", "id", data.ID, "amount", data.Amount, "currency", data.Currency)
 			}
 		default:
-			slog.InfoContext(ctx, "未处理事件类型", "event", evt.Event)
+			slog.InfoContext(ctx, "未处理事件类型", "event", evt.Name)
 		}
 
 		w.WriteHeader(http.StatusOK)

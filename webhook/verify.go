@@ -4,7 +4,6 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
@@ -59,41 +58,4 @@ func VerifySignatureWithTolerance(payload []byte, timestampHeader, signatureHead
 		return fmt.Errorf("webhook: signature mismatch")
 	}
 	return nil
-}
-
-// Event represents the generic structure of an Airwallex webhook event.
-// Event 表示 Airwallex webhook 事件通用结构。
-type Event struct {
-	// ID is the unique event identifier.
-	// ID 事件唯一标识符。
-	ID string `json:"id"`
-	// Event is the event type name.
-	// Event 事件类型名称。
-	Event string `json:"event"`
-	// Data is the event payload (JSON object, type depends on event type).
-	// Data 事件载荷（JSON 对象，类型取决于 event）。
-	Data json.RawMessage `json:"data"`
-	// CreatedAt is the event creation time.
-	// CreatedAt 事件创建时间。
-	CreatedAt string `json:"created_at"`
-}
-
-// ParseEvent parses a webhook payload into an Event struct.
-// ParseEvent 将 webhook payload 解析为 Event 结构体。
-func ParseEvent(payload []byte) (*Event, error) {
-	var evt Event
-	if err := json.Unmarshal(payload, &evt); err != nil {
-		return nil, fmt.Errorf("webhook: unmarshal event: %w", err)
-	}
-	return &evt, nil
-}
-
-// UnmarshalData unmarshals Event.Data into a value of the specified type.
-// UnmarshalData 将 Event.Data 解析为指定类型的值。
-func UnmarshalData[T any](evt *Event) (*T, error) {
-	var v T
-	if err := json.Unmarshal(evt.Data, &v); err != nil {
-		return nil, fmt.Errorf("webhook: unmarshal event data: %w", err)
-	}
-	return &v, nil
 }

@@ -44,7 +44,7 @@ func generateTestSignature(payload []byte, secret string, tsMillis int64) string
 // ─── 签名验证测试 ───
 
 func TestVerifySignatureValid(t *testing.T) {
-	payload := []byte(`{"event":"payment_intent.succeeded","data":{"id":"pi_123"}}`)
+	payload := []byte(`{"name":"payment_intent.succeeded","data":{"object":{"id":"pi_123"}}}`)
 	secret := "whsec_test_secret"
 	now := time.Now().UnixMilli()
 	sig := generateTestSignature(payload, secret, now)
@@ -52,14 +52,14 @@ func TestVerifySignatureValid(t *testing.T) {
 }
 
 func TestVerifySignatureInvalid(t *testing.T) {
-	payload := []byte(`{"event":"payment_intent.succeeded","data":{"id":"pi_123"}}`)
+	payload := []byte(`{"name":"payment_intent.succeeded","data":{"object":{"id":"pi_123"}}}`)
 	secret := "whsec_test_secret"
 	now := time.Now().UnixMilli()
 	require.Error(t, webhook.VerifySignature(payload, strconv.FormatInt(now, 10), "invalid_sig", secret), "invalid signature should fail")
 }
 
 func TestVerifySignatureFutureTimestamp(t *testing.T) {
-	payload := []byte(`{"event":"payment_intent.succeeded","data":{"id":"pi_123"}}`)
+	payload := []byte(`{"name":"payment_intent.succeeded","data":{"object":{"id":"pi_123"}}}`)
 	secret := "whsec_test_secret"
 	future := time.Now().UnixMilli() + 400*1000 // 400 秒后
 	sig := generateTestSignature(payload, secret, future)
@@ -67,7 +67,7 @@ func TestVerifySignatureFutureTimestamp(t *testing.T) {
 }
 
 func TestVerifySignaturePastTimestamp(t *testing.T) {
-	payload := []byte(`{"event":"payment_intent.succeeded","data":{"id":"pi_123"}}`)
+	payload := []byte(`{"name":"payment_intent.succeeded","data":{"object":{"id":"pi_123"}}}`)
 	secret := "whsec_test_secret"
 	past := time.Now().UnixMilli() - 400*1000 // 400 秒前
 	sig := generateTestSignature(payload, secret, past)
@@ -75,7 +75,7 @@ func TestVerifySignaturePastTimestamp(t *testing.T) {
 }
 
 func TestVerifySignatureCustomTolerance(t *testing.T) {
-	payload := []byte(`{"event":"payment_intent.succeeded","data":{"id":"pi_123"}}`)
+	payload := []byte(`{"name":"payment_intent.succeeded","data":{"object":{"id":"pi_123"}}}`)
 	secret := "whsec_test_secret"
 	past := time.Now().UnixMilli() - 400*1000 // 400 秒前，但在 600 秒容差内
 	sig := generateTestSignature(payload, secret, past)
@@ -83,14 +83,14 @@ func TestVerifySignatureCustomTolerance(t *testing.T) {
 }
 
 func TestVerifySignatureWrongSecret(t *testing.T) {
-	payload := []byte(`{"event":"payment_intent.succeeded","data":{"id":"pi_123"}}`)
+	payload := []byte(`{"name":"payment_intent.succeeded","data":{"object":{"id":"pi_123"}}}`)
 	now := time.Now().UnixMilli()
 	sig := generateTestSignature(payload, "wrong_secret", now)
 	require.Error(t, webhook.VerifySignature(payload, strconv.FormatInt(now, 10), sig, "whsec_test_secret"), "wrong secret should fail")
 }
 
 func TestVerifySignatureInvalidTimestamp(t *testing.T) {
-	payload := []byte(`{"event":"payment_intent.succeeded","data":{"id":"pi_123"}}`)
+	payload := []byte(`{"name":"payment_intent.succeeded","data":{"object":{"id":"pi_123"}}}`)
 	secret := "whsec_test_secret"
 	require.Error(t, webhook.VerifySignature(payload, "not_a_number", "any_signature", secret), "invalid timestamp format should fail")
 }
@@ -100,16 +100,20 @@ func TestVerifySignatureInvalidTimestamp(t *testing.T) {
 func TestParseEvent(t *testing.T) {
 	payload := []byte(`{
 		"id": "evt_123",
-		"event": "payment_intent.succeeded",
-		"data": {"id": "pi_123", "status": "SUCCEEDED"},
-		"created_at": "2024-01-15T08:30:00Z"
+		"name": "payment_intent.succeeded",
+		"account_id": "acct_123",
+		"data": {"object": {"id": "pi_123", "status": "SUCCEEDED"}},
+		"created_at": "2024-01-15T08:30:00Z",
+		"version": "2024-02-22"
 	}`)
 
 	evt, err := webhook.ParseEvent(payload)
 	require.NoError(t, err, "parse event failed")
 	assert.Equal(t, "evt_123", evt.ID)
-	assert.Equal(t, "payment_intent.succeeded", evt.Event)
+	assert.Equal(t, "payment_intent.succeeded", evt.Name)
+	assert.Equal(t, "acct_123", evt.AccountID)
 	assert.Equal(t, "2024-01-15T08:30:00Z", evt.CreatedAt)
+	assert.Equal(t, "2024-02-22", evt.Version)
 }
 
 func TestParseEventInvalidJSON(t *testing.T) {
@@ -117,11 +121,11 @@ func TestParseEventInvalidJSON(t *testing.T) {
 	require.Error(t, err, "invalid json should fail")
 }
 
-func TestUnmarshalData(t *testing.T) {
+func TestUnmarshalDataObject(t *testing.T) {
 	payload := []byte(`{
 		"id": "evt_123",
-		"event": "payment_intent.succeeded",
-		"data": {"id": "pi_123", "status": "SUCCEEDED", "amount": 100.0, "currency": "USD"},
+		"name": "payment_intent.succeeded",
+		"data": {"object": {"id": "pi_123", "status": "SUCCEEDED", "amount": 100.0, "currency": "USD"}},
 		"created_at": "2024-01-15T08:30:00Z"
 	}`)
 
@@ -134,12 +138,57 @@ func TestUnmarshalData(t *testing.T) {
 		Amount   float64 `json:"amount"`
 		Currency string  `json:"currency"`
 	}
-	data, err := webhook.UnmarshalData[PaymentIntentData](evt)
-	require.NoError(t, err, "unmarshal data failed")
+	data, err := webhook.UnmarshalDataObject[PaymentIntentData](evt)
+	require.NoError(t, err, "unmarshal data object failed")
 	assert.Equal(t, "pi_123", data.ID)
 	assert.Equal(t, "SUCCEEDED", data.Status)
 	assert.Equal(t, 100.0, data.Amount)
 	assert.Equal(t, "USD", data.Currency)
+}
+
+func TestUnmarshalDataFlat(t *testing.T) {
+	payload := []byte(`{
+		"id": "evt_123",
+		"name": "issuing.transaction.succeeded",
+		"data": {"transaction_id": "tx_123", "status": "APPROVED", "transaction_amount": 100},
+		"created_at": "2024-01-15T08:30:00Z"
+	}`)
+
+	evt, err := webhook.ParseEvent(payload)
+	require.NoError(t, err, "parse event failed")
+
+	type TransactionData struct {
+		TransactionID     string `json:"transaction_id"`
+		Status            string `json:"status"`
+		TransactionAmount int    `json:"transaction_amount"`
+	}
+	data, err := webhook.UnmarshalData[TransactionData](evt)
+	require.NoError(t, err, "unmarshal flat data failed")
+	assert.Equal(t, "tx_123", data.TransactionID)
+	assert.Equal(t, "APPROVED", data.Status)
+	assert.Equal(t, 100, data.TransactionAmount)
+}
+
+func TestUnmarshalDataBackwardCompatibility(t *testing.T) {
+	// Test that UnmarshalData still works with object-wrapped data (backward compatibility)
+	payload := []byte(`{
+		"id": "evt_123",
+		"name": "payment_intent.succeeded",
+		"data": {"object": {"id": "pi_123", "status": "SUCCEEDED"}},
+		"created_at": "2024-01-15T08:30:00Z"
+	}`)
+
+	evt, err := webhook.ParseEvent(payload)
+	require.NoError(t, err, "parse event failed")
+
+	type PaymentIntentData struct {
+		ID     string `json:"id"`
+		Status string `json:"status"`
+	}
+	data, err := webhook.UnmarshalData[PaymentIntentData](evt)
+	require.NoError(t, err, "unmarshal data backward compatibility failed")
+	assert.Equal(t, "pi_123", data.ID)
+	assert.Equal(t, "SUCCEEDED", data.Status)
 }
 
 // ─── Webhook 端点生命周期测试 ───

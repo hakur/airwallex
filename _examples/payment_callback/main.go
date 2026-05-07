@@ -121,7 +121,7 @@ func main() {
 		slog.Error("解析事件失败", "error", err)
 		os.Exit(1)
 	}
-	slog.Info("事件已解析", "id", evt.ID, "event", evt.Event)
+	slog.Info("事件已解析", "id", evt.ID, "event", evt.Name)
 
 	// 解析具体的 PaymentIntent 数据
 	type PaymentIntentData struct {
@@ -131,7 +131,7 @@ func main() {
 		Currency     string `json:"currency"`
 		MerchantOrderID string `json:"merchant_order_id,omitempty"`
 	}
-	data, err := webhook.UnmarshalData[PaymentIntentData](evt)
+	data, err := webhook.UnmarshalDataObject[PaymentIntentData](evt)
 	if err != nil {
 		slog.Error("解析事件数据失败", "error", err)
 		os.Exit(1)
@@ -150,20 +150,22 @@ func main() {
 	slog.Info("- 阶段二演示本地 webhook 签名验证与事件解析")
 	slog.Info("- 生产环境中应注册 webhook URL 到 Airwallex 后台")
 	slog.Info("- 签名验证是必须的安全步骤，验证失败说明请求可能被篡改")
-	slog.Info("- 事件类型通过 evt.Event 字段区分（如 payment_intent.succeeded）")
+		slog.Info("- 事件类型通过 evt.Name 字段区分（如 payment_intent.succeeded）")
 }
 
 // demoWebhookPayload 构造一个符合 Airwallex 规范的 webhook 回调 JSON。
 func demoWebhookPayload(piID string, amount float64, currency string) []byte {
 	payload := map[string]interface{}{
 		"id":         "evt_demo_" + time.Now().Format("20060102150405"),
-		"event":      "payment_intent.succeeded",
+		"name":       "payment_intent.succeeded",
 		"created_at": time.Now().UTC().Format("2006-01-02T15:04:05Z"),
 		"data": map[string]interface{}{
-			"id":       piID,
-			"status":   "SUCCEEDED",
-			"amount":   amount,
-			"currency": currency,
+			"object": map[string]interface{}{
+				"id":       piID,
+				"status":   "SUCCEEDED",
+				"amount":   amount,
+				"currency": currency,
+			},
 		},
 	}
 	b, _ := json.Marshal(payload)
