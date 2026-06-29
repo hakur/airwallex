@@ -276,6 +276,129 @@ type CreatePIConsentRequest struct {
 	TermsOfUse *CreatePaymentConsentTermsRequest `json:"terms_of_use,omitempty"`
 }
 
+// CardAuthorizationType represents the card authorization type.
+// CardAuthorizationType 卡授权类型枚举。
+type CardAuthorizationType = string
+
+const (
+	// CardAuthFinalAuth indicates final authorization.
+	// CardAuthFinalAuth 最终授权。
+	CardAuthFinalAuth CardAuthorizationType = "final_auth"
+	// CardAuthPreAuth indicates pre-authorization (requires manual capture).
+	// CardAuthPreAuth 预授权（需手动捕获）。
+	CardAuthPreAuth CardAuthorizationType = "pre_auth"
+)
+
+// ThreeDSAction represents the 3D Secure action.
+// ThreeDSAction 3DS 验证操作枚举。
+type ThreeDSAction = string
+
+const (
+	// ThreeDSForce forces 3D Secure verification.
+	// ThreeDSForce 强制 3DS 验证。
+	ThreeDSForce ThreeDSAction = "FORCE_3DS"
+	// ThreeDSSkip skips 3D Secure verification.
+	// ThreeDSSkip 跳过 3DS 验证。
+	ThreeDSSkip ThreeDSAction = "SKIP_3DS"
+	// ThreeDSExternal uses external 3D Secure provider.
+	// ThreeDSExternal 使用外部 3DS 提供商。
+	ThreeDSExternal ThreeDSAction = "EXTERNAL_3DS"
+)
+
+// CardPaymentMethodOptions represents card payment method options.
+// CardPaymentMethodOptions 卡支付方式选项。
+type CardPaymentMethodOptions struct {
+	// AuthorizationType is the authorization type.
+	// AuthorizationType 授权类型。
+	AuthorizationType CardAuthorizationType `json:"authorization_type,omitempty"`
+	// AutoCapture indicates whether to auto-capture after authorization. Pointer to distinguish false vs unset.
+	// AutoCapture 授权后是否自动捕获。指针类型以区分 false 和未设置。
+	AutoCapture *bool `json:"auto_capture,omitempty"`
+	// CardInputVia is the cardholder input channel. One of ecommerce or moto.
+	// CardInputVia 持卡人输入渠道。
+	CardInputVia string `json:"card_input_via,omitempty"`
+	// MerchantTriggerReason is the reason for merchant-initiated transaction.
+	// MerchantTriggerReason 商户发起交易的原因。
+	MerchantTriggerReason string `json:"merchant_trigger_reason,omitempty"`
+	// ThreeDSAction is the 3D Secure action.
+	// ThreeDSAction 3DS 验证操作。
+	ThreeDSAction ThreeDSAction `json:"three_ds_action,omitempty"`
+}
+
+// PaymentMethodOptionsRequest represents payment method options in requests.
+// PaymentMethodOptionsRequest 请求中的支付方式选项。
+type PaymentMethodOptionsRequest struct {
+	// Card is the card payment method options.
+	// Card 卡支付方式选项。
+	Card *CardPaymentMethodOptions `json:"card,omitempty"`
+}
+
+// NextActionType represents the next action type.
+// NextActionType 下一步操作类型枚举。
+type NextActionType = string
+
+const (
+	// NextActionRedirect indicates redirect action.
+	// NextActionRedirect 网页跳转。
+	NextActionRedirect NextActionType = "redirect"
+	// NextActionRedirectIframe indicates redirect via iframe.
+	// NextActionRedirectIframe iframe 跳转。
+	NextActionRedirectIframe NextActionType = "redirect_iframe"
+	// NextActionMobileAppRedirect indicates redirect via mobile app.
+	// NextActionMobileAppRedirect 移动应用跳转。
+	NextActionMobileAppRedirect NextActionType = "mobile_app_redirect"
+	// NextActionNotifyMicroDeposits indicates micro deposit notification.
+	// NextActionNotifyMicroDeposits 微存通知。
+	NextActionNotifyMicroDeposits NextActionType = "notify_micro_deposits"
+	// NextActionRetryMicroDebit indicates micro debit retry.
+	// NextActionRetryMicroDebit 微借重试。
+	NextActionRetryMicroDebit NextActionType = "retry_micro_debit"
+	// NextActionRenderQRCode indicates QR code rendering.
+	// NextActionRenderQRCode 渲染二维码。
+	NextActionRenderQRCode NextActionType = "render_qrcode"
+)
+
+// NextAction represents the next action required from the customer.
+// NextAction 表示客户需要执行的下一步操作。
+type NextAction struct {
+	// Type is the action type. Always present.
+	// Type 操作类型。始终返回。
+	Type NextActionType `json:"type"`
+	// Method is the HTTP method for redirect actions.
+	// Method 跳转的 HTTP 方法。
+	Method string `json:"method,omitempty"`
+	// URL is the redirect URL.
+	// URL 跳转地址。
+	URL string `json:"url,omitempty"`
+	// Stage is the current stage of the action flow.
+	// Stage 当前操作的阶段。
+	Stage string `json:"stage,omitempty"`
+	// ContentType is the content type for POST requests.
+	// ContentType POST 请求的内容类型。
+	ContentType string `json:"content_type,omitempty"`
+	// Data contains additional action-specific data.
+	// Data 额外的操作特定数据。
+	Data map[string]any `json:"data,omitempty"`
+	// FallbackURL is the fallback URL for mobile app redirects.
+	// FallbackURL 移动应用跳转的备用 URL。
+	FallbackURL string `json:"fallback_url,omitempty"`
+	// PackageName is the Android package name for app redirects.
+	// PackageName Android 应用包名。
+	PackageName string `json:"package_name,omitempty"`
+	// QRCode is the QR code data for render_qrcode action.
+	// QRCode 二维码数据。
+	QRCode string `json:"qrcode,omitempty"`
+	// Email is the email for micro deposit notifications.
+	// Email 微存通知的邮箱。
+	Email string `json:"email,omitempty"`
+	// MicroDepositCount is the number of micro deposits.
+	// MicroDepositCount 微存次数。
+	MicroDepositCount int `json:"micro_deposit_count,omitempty"`
+	// RemainingAttempts is the remaining retry attempts.
+	// RemainingAttempts 剩余重试次数。
+	RemainingAttempts int `json:"remaining_attempts,omitempty"`
+}
+
 // PaymentIntent represents a payment intent.
 // PaymentIntent 表示支付意图信息。
 type PaymentIntent struct {
@@ -323,7 +446,7 @@ type PaymentIntent struct {
 	ClientSecret string `json:"client_secret,omitempty"`
 	// NextAction is the next action information. Optional.
 	// NextAction 下一步操作信息。可选。
-	NextAction map[string]any `json:"next_action,omitempty"`
+	NextAction *NextAction `json:"next_action,omitempty"`
 	// PaymentMethod is the payment method information. Optional.
 	// PaymentMethod 支付方式信息。可选。
 	PaymentMethod map[string]any `json:"payment_method,omitempty"`
@@ -406,13 +529,11 @@ type CreatePaymentIntentRequest struct {
 	PaymentMethod *PaymentMethodInput `json:"payment_method,omitempty"`
 	// PaymentMethodOptions are the payment method options. Optional.
 	// PaymentMethodOptions 支付方式选项。可选。
-	PaymentMethodOptions map[string]any `json:"payment_method_options,omitempty"`
+	PaymentMethodOptions *PaymentMethodOptionsRequest `json:"payment_method_options,omitempty"`
 	// ReturnURL 返回地址。可选。
 	ReturnURL string `json:"return_url,omitempty"`
 	// Metadata 元数据。可选。
 	Metadata map[string]any `json:"metadata,omitempty"`
-	// CaptureMethod 捕获方式。可选。
-	CaptureMethod string `json:"capture_method,omitempty"`
 	// SetupFuturePayment 是否设置未来支付。可选。
 	SetupFuturePayment bool `json:"setup_future_payment,omitempty"`
 	// NotificationURL 通知地址。可选。
@@ -485,16 +606,13 @@ type UpdatePaymentIntentRequest struct {
 	PaymentMethod *PaymentMethodInput `json:"payment_method,omitempty"`
 	// PaymentMethodOptions are the payment method options. Optional.
 	// PaymentMethodOptions 支付方式选项。可选。
-	PaymentMethodOptions map[string]any `json:"payment_method_options,omitempty"`
+	PaymentMethodOptions *PaymentMethodOptionsRequest `json:"payment_method_options,omitempty"`
 	// ReturnURL is the return URL. Optional.
 	// ReturnURL 返回地址。可选。
 	ReturnURL string `json:"return_url,omitempty"`
 	// Metadata is additional metadata. Optional.
 	// Metadata 元数据。可选。
 	Metadata map[string]any `json:"metadata,omitempty"`
-	// CaptureMethod is the capture method. Optional.
-	// CaptureMethod 捕获方式。可选。
-	CaptureMethod string `json:"capture_method,omitempty"`
 	// SetupFuturePayment indicates whether to set up future payment. Optional.
 	// SetupFuturePayment 是否设置未来支付。可选。
 	SetupFuturePayment bool `json:"setup_future_payment,omitempty"`
@@ -553,16 +671,13 @@ type ConfirmPaymentIntentRequest struct {
 	PaymentMethod *PaymentMethodInput `json:"payment_method,omitempty"`
 	// PaymentMethodOptions are the payment method options. Optional.
 	// PaymentMethodOptions 支付方式选项。可选。
-	PaymentMethodOptions map[string]any `json:"payment_method_options,omitempty"`
+	PaymentMethodOptions *PaymentMethodOptionsRequest `json:"payment_method_options,omitempty"`
 	// ReturnURL is the return URL. Optional.
 	// ReturnURL 返回地址。可选。
 	ReturnURL string `json:"return_url,omitempty"`
 	// Metadata is additional metadata. Optional.
 	// Metadata 元数据。可选。
 	Metadata map[string]any `json:"metadata,omitempty"`
-	// CaptureMethod is the capture method. Optional.
-	// CaptureMethod 捕获方式。可选。
-	CaptureMethod string `json:"capture_method,omitempty"`
 	// SetupFuturePayment indicates whether to set up future payment. Optional.
 	// SetupFuturePayment 是否设置未来支付。可选。
 	SetupFuturePayment bool `json:"setup_future_payment,omitempty"`

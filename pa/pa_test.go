@@ -80,7 +80,6 @@ func TestPaymentIntentLifecycle(t *testing.T) {
 		MerchantOrderID: "order-capture-" + time.Now().Format("20060102150405"),
 		Amount:          100.0,
 		Currency:        sdk.CurrencyUSD,
-		CaptureMethod:   "manual",
 	})
 	require.NoError(t, err, "create payment intent for capture failed")
 	t.Logf("created capture PI: %s status=%s", piCapture.ID, piCapture.Status)
@@ -193,7 +192,6 @@ func TestRefundLifecycle(t *testing.T) {
 		Amount:          50.0,
 		Currency:        sdk.CurrencyUSD,
 		MerchantOrderID: "order-refund-" + time.Now().Format("20060102150405"),
-		CaptureMethod:   "manual",
 	})
 	require.NoError(t, err, "create payment intent for refund failed")
 	t.Logf("created refund PI: %s status=%s", pi.ID, pi.Status)

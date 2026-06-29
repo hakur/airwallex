@@ -28,20 +28,38 @@ func main() {
 
 	// 支持多种支付方式: "card" | "wechatpay" | "alipay" | "airwallex_pay" | "kakaopay" | "visa"
 	// 修改此变量切换支付方式
-	paymentMethod := "card"
+	paymentMethod := "wechatpay"
 
-	// 创建 PaymentIntent
+	// 创建 PaymentIntent（演示最大可能入参）
 	intent, err := svc.CreatePaymentIntent(ctx, &pa.CreatePaymentIntentRequest{
 		RequestID:       "pi-req-" + time.Now().Format("20060102150405"),
 		MerchantOrderID: "order-" + time.Now().Format("20060102150405"),
 		Amount:          100.0,
 		Currency:        sdk.CurrencyUSD,
+		OrderType:       "retail",
+		Order: &pa.CreateOrderRequest{
+			Cancellable:     true,
+			CreatedAt:       "2026-06-29T12:00:00Z",
+			PrepaymentModel: pa.PrepaymentModelFull,
+		},
+		Shipping: &pa.CreateShippingRequest{
+			PhoneNumber:    "+1234567890",
+			ShippingMethod: "express",
+		},
+		Billing: &pa.CreateBillingRequest{
+			FirstName: "Demo",
+			LastName:  "User",
+			Address:   &pa.CreateAddressRequest{CountryCode: "US", City: "San Francisco"},
+		},
 	})
 	if err != nil {
 		slog.Error("创建 PaymentIntent 失败", "error", err)
 		return
 	}
 	slog.Info("创建 PaymentIntent", "id", intent.ID, "status", intent.Status)
+	if intent.Customer != nil {
+		slog.Info("  ↳ Customer", "name", intent.Customer.FirstName+" "+intent.Customer.LastName)
+	}
 
 	// 获取 PaymentIntent
 	fetched, err := svc.GetPaymentIntent(ctx, intent.ID)
@@ -99,10 +117,19 @@ func main() {
 		return
 	}
 
-	// 确认 PaymentIntent
+	// 预授权模式 + 强制 3DS — 授权后不自动扣款，需手动捕获
 	confirmed, err := svc.ConfirmPaymentIntent(ctx, intent.ID, &pa.ConfirmPaymentIntentRequest{
 		RequestID:     "pi-confirm-" + time.Now().Format("20060102150405"),
 		PaymentMethod: pmInput,
+		Surcharge:     &pa.CreateSurchargeRequest{Amount: 5.0},
+		Tip:           &pa.CreateTipRequest{Amount: 2.0},
+		PaymentMethodOptions: &pa.PaymentMethodOptionsRequest{
+			Card: &pa.CardPaymentMethodOptions{
+				AuthorizationType: pa.CardAuthPreAuth,
+				AutoCapture:       new(false),
+				ThreeDSAction:     pa.ThreeDSForce,
+			},
+		},
 	})
 	if err != nil {
 		if sdk.IsForbidden(err) {
@@ -127,6 +154,7 @@ func main() {
 		// card 支付成功授权，需要手动捕获
 		captured, err := svc.CapturePaymentIntent(ctx, intent.ID, &pa.CapturePaymentIntentRequest{
 			RequestID: "pi-capture-" + time.Now().Format("20060102150405"),
+			Metadata:  map[string]any{"source": "demo"},
 		})
 		if err != nil {
 			if sdk.IsInvalidStatusForOperation(err) {
@@ -140,11 +168,10 @@ func main() {
 
 	case pa.PaymentIntentStatusRequiresCustomerAction:
 		// wechatpay / alipay 需要用户扫码完成支付
-		redirectURL, ok := confirmed.NextAction["url"].(string)
-		if ok && redirectURL != "" {
-			slog.Info("请完成支付，正在打开浏览器", "url", redirectURL)
-			if err := openBrowser(redirectURL); err != nil {
-				slog.Warn("自动打开浏览器失败，请手动访问", "url", redirectURL, "error", err)
+		if confirmed.NextAction != nil && confirmed.NextAction.URL != "" {
+			slog.Info("请完成支付，正在打开浏览器", "url", confirmed.NextAction.URL)
+			if err := openBrowser(confirmed.NextAction.URL); err != nil {
+				slog.Warn("自动打开浏览器失败，请手动访问", "url", confirmed.NextAction.URL, "error", err)
 			}
 		} else {
 			slog.Info("支付需要用户操作", "next_action", confirmed.NextAction)

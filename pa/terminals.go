@@ -158,7 +158,7 @@ type ProcessPaymentIntentInTerminalRequest struct {
 	// PaymentIntentID 支付意图唯一标识符。必填。
 	PaymentIntentID string `json:"payment_intent_id"`
 	// PaymentMethodOptions 支付方式选项。可选。
-	PaymentMethodOptions map[string]any `json:"payment_method_options,omitempty"`
+	PaymentMethodOptions *PaymentMethodOptionsRequest `json:"payment_method_options,omitempty"`
 }
 
 // CreateTerminal creates a terminal device.

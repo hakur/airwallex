@@ -40,23 +40,62 @@ func main() {
 	// 阶段一：创建并完成支付（真实 Sandbox API）
 	// ========================================
 
-	// 1. 创建 PaymentIntent
+	// 1. 创建 PaymentIntent（演示最大可能入参）
 	slog.Info("=== 1. 创建 PaymentIntent ===")
 	pi, err := svc.CreatePaymentIntent(ctx, &pa.CreatePaymentIntentRequest{
-		RequestID: "pi-cb-" + time.Now().Format("20060102150405"),
-		Amount:    100.00,
-		Currency:  sdk.CurrencyUSD,
+		RequestID:       "pi-cb-" + time.Now().Format("20060102150405"),
+		MerchantOrderID: "order-cb-" + time.Now().Format("20060102150405"),
+		Amount:          100.00,
+		Currency:        sdk.CurrencyUSD,
+		OrderType:       "retail",
+		Order: &pa.CreateOrderRequest{
+			Cancellable:     true,
+			CreatedAt:       "2026-06-29T12:00:00Z",
+			PrepaymentModel: pa.PrepaymentModelFull,
+		},
+		Shipping: &pa.CreateShippingRequest{
+			PhoneNumber:    "+1234567890",
+			ShippingMethod: "express",
+		},
+		Billing: &pa.CreateBillingRequest{
+			FirstName: "Demo",
+			LastName:  "User",
+			Address:   &pa.CreateAddressRequest{CountryCode: "US", City: "San Francisco"},
+		},
 	})
 	if err != nil {
 		slog.Error("创建 PaymentIntent 失败", "error", err)
 		os.Exit(1)
 	}
 	slog.Info("PaymentIntent 已创建", "id", pi.ID, "status", pi.Status)
+	if pi.Customer != nil {
+		slog.Info("  ↳ Customer", "name", pi.Customer.FirstName+" "+pi.Customer.LastName, "email", pi.Customer.Email)
+	}
 
-	// 2. 确认支付（触发扣款）
+	// 2. 确认支付（触发扣款，演示最大入参）
 	slog.Info("=== 2. 确认支付 ===")
 	confirmed, err := svc.ConfirmPaymentIntent(ctx, pi.ID, &pa.ConfirmPaymentIntentRequest{
 		RequestID: "pi-confirm-" + time.Now().Format("20060102150405"),
+		PaymentMethod: &pa.PaymentMethodInput{
+			Type: "card",
+			Card: &pa.CardPaymentMethod{
+				Number:      "4012000300001003",
+				ExpiryMonth: "03",
+				ExpiryYear:  "2030",
+				CVC:         "123",
+				Name:        "Demo User",
+			},
+		},
+		Surcharge: &pa.CreateSurchargeRequest{Amount: 5.0},
+		Tip:       &pa.CreateTipRequest{Amount: 2.0},
+		// 预授权模式 + 强制 3DS 验证
+		PaymentMethodOptions: &pa.PaymentMethodOptionsRequest{
+			Card: &pa.CardPaymentMethodOptions{
+				AuthorizationType: pa.CardAuthPreAuth,
+				AutoCapture:       new(false),
+				ThreeDSAction:     pa.ThreeDSForce,
+			},
+		},
 	})
 	if err != nil {
 		slog.Error("确认支付失败", "error", err)
@@ -64,18 +103,23 @@ func main() {
 	}
 	slog.Info("支付已确认", "id", confirmed.ID, "status", confirmed.Status)
 
-	// 3. 捕获支付（最终完成）
+	// 3. 捕获支付（若已自动捕获则跳过）
 	time.Sleep(500 * time.Millisecond) // 等待支付状态稳定
 	slog.Info("=== 3. 捕获支付 ===")
-	captured, err := svc.CapturePaymentIntent(ctx, pi.ID, &pa.CapturePaymentIntentRequest{
-		RequestID: "pi-capture-" + time.Now().Format("20060102150405"),
-		Amount:    100.00,
-	})
-	if err != nil {
-		slog.Error("捕获支付失败", "error", err)
-		os.Exit(1)
+	if confirmed.Status == pa.PaymentIntentStatusRequiresCapture {
+		captured, err := svc.CapturePaymentIntent(ctx, pi.ID, &pa.CapturePaymentIntentRequest{
+			RequestID: "pi-capture-" + time.Now().Format("20060102150405"),
+			Amount:    100.00,
+			Metadata:  map[string]any{"source": "demo"},
+		})
+		if err != nil {
+			slog.Error("捕获支付失败", "error", err)
+			os.Exit(1)
+		}
+		slog.Info("支付已捕获", "id", captured.ID, "status", captured.Status)
+	} else {
+		slog.Info("支付已自动捕获（status=" + confirmed.Status + "），跳过显式捕获")
 	}
-	slog.Info("支付已捕获", "id", captured.ID, "status", captured.Status)
 
 	// 4. 取消 PaymentIntent（清理沙箱数据）
 	slog.Info("=== 4. 清理：取消 PaymentIntent ===")
@@ -123,13 +167,32 @@ func main() {
 	}
 	slog.Info("事件已解析", "id", evt.ID, "event", evt.Name)
 
-	// 解析具体的 PaymentIntent 数据
+	// 解析具体的 PaymentIntent 数据（演示最大可能响应字段）
 	type PaymentIntentData struct {
-		ID           string `json:"id"`
-		Status       string `json:"status"`
-		Amount       float64 `json:"amount"`
-		Currency     string `json:"currency"`
-		MerchantOrderID string `json:"merchant_order_id,omitempty"`
+		ID              string  `json:"id"`
+		Status          string  `json:"status"`
+		Amount          float64 `json:"amount"`
+		Currency        string  `json:"currency"`
+		MerchantOrderID string  `json:"merchant_order_id,omitempty"`
+		OrderType       string  `json:"type,omitempty"`
+		Order           *struct {
+			Cancellable     bool   `json:"cancellable"`
+			CreatedAt       string `json:"created_at"`
+			PrepaymentModel string `json:"prepayment_model,omitempty"`
+		} `json:"order,omitempty"`
+		Shipping *struct {
+			PhoneNumber    string `json:"phone_number,omitempty"`
+			ShippingMethod string `json:"shipping_method,omitempty"`
+		} `json:"shipping,omitempty"`
+		Billing *struct {
+			FirstName string `json:"first_name,omitempty"`
+			LastName  string `json:"last_name,omitempty"`
+		} `json:"billing,omitempty"`
+		Customer *struct {
+			FirstName string `json:"first_name,omitempty"`
+			LastName  string `json:"last_name,omitempty"`
+			Email     string `json:"email,omitempty"`
+		} `json:"customer,omitempty"`
 	}
 	data, err := webhook.UnmarshalDataObject[PaymentIntentData](evt)
 	if err != nil {
@@ -142,6 +205,12 @@ func main() {
 		"currency", data.Currency,
 		"status", data.Status,
 	)
+	if data.Customer != nil {
+		slog.Info("  ↳ Customer", "name", data.Customer.FirstName+" "+data.Customer.LastName)
+	}
+	if data.Order != nil {
+		slog.Info("  ↳ Order", "prepayment_model", data.Order.PrepaymentModel)
+	}
 
 	slog.Info("")
 	slog.Info("=== 完整流程演示完毕 ===")
@@ -153,18 +222,38 @@ func main() {
 		slog.Info("- 事件类型通过 evt.Name 字段区分（如 payment_intent.succeeded）")
 }
 
-// demoWebhookPayload 构造一个符合 Airwallex 规范的 webhook 回调 JSON。
+// demoWebhookPayload 构造一个符合 Airwallex 规范的 webhook 回调 JSON（演示最大可能字段）。
 func demoWebhookPayload(piID string, amount float64, currency string) []byte {
-	payload := map[string]interface{}{
+	payload := map[string]any{
 		"id":         "evt_demo_" + time.Now().Format("20060102150405"),
 		"name":       "payment_intent.succeeded",
 		"created_at": time.Now().UTC().Format("2006-01-02T15:04:05Z"),
-		"data": map[string]interface{}{
-			"object": map[string]interface{}{
+		"data": map[string]any{
+			"object": map[string]any{
 				"id":       piID,
 				"status":   "SUCCEEDED",
 				"amount":   amount,
 				"currency": currency,
+				"merchant_order_id": "order-cb-" + time.Now().Format("20060102150405"),
+				"type":             "retail",
+				"order": map[string]any{
+					"cancellable":      true,
+					"created_at":       "2026-06-29T12:00:00Z",
+					"prepayment_model": "FULL",
+				},
+				"shipping": map[string]any{
+					"phone_number":    "+1234567890",
+					"shipping_method": "express",
+				},
+				"billing": map[string]any{
+					"first_name": "Demo",
+					"last_name":  "User",
+				},
+				"customer": map[string]any{
+					"first_name": "Demo",
+					"last_name":  "User",
+					"email":      "demo@example.com",
+				},
 			},
 		},
 	}
