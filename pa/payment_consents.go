@@ -52,7 +52,7 @@ type CreatePaymentConsentRequest struct {
 	PaymentMethodID string `json:"payment_method_id,omitempty"`
 	// NextTriggeredBy is the next trigger initiator. Required.
 	// NextTriggeredBy 下次触发方。必填。
-	NextTriggeredBy string `json:"next_triggered_by"`
+	NextTriggeredBy PaymentConsentTrigger `json:"next_triggered_by"`
 	// Metadata is additional metadata. Optional.
 	// Metadata 元数据。可选。
 	Metadata map[string]any `json:"metadata,omitempty"`

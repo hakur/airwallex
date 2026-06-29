@@ -44,7 +44,7 @@ type CustomsDeclaration struct {
 	RequestID string `json:"request_id"`
 	// Status is the declaration status. Required.
 	// Status 申报状态。必填。
-	Status string `json:"status"`
+	Status CustomsDeclarationStatus `json:"status"`
 	// PaymentMethodType is the payment method type. Optional.
 	// PaymentMethodType 支付方式类型。可选。
 	PaymentMethodType string `json:"payment_method_type,omitempty"`
@@ -111,7 +111,7 @@ type SubOrder struct {
 	ShippingFee float64 `json:"shipping_fee"`
 	// Currency is the currency code. Required.
 	// Currency 货币代码。必填。
-	Currency string `json:"currency"`
+	Currency sdk.Currency `json:"currency"`
 }
 
 // ShopperDetails represents shopper identity information.

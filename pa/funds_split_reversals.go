@@ -32,6 +32,9 @@ type FundsSplitReversal struct {
 	// CreatedAt is the creation time. Optional.
 	// CreatedAt 创建时间。可选。
 	CreatedAt string `json:"created_at,omitempty"`
+	// UpdatedAt is the update time. Optional.
+	// UpdatedAt 更新时间。可选。
+	UpdatedAt string `json:"updated_at,omitempty"`
 }
 
 // CreateFundsSplitReversalRequest is the request to create a funds split reversal.

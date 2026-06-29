@@ -32,7 +32,7 @@ type Customer struct {
 	BusinessName string `json:"business_name,omitempty"`
 	// Address is the address information. Optional.
 	// Address 地址信息。可选。
-	Address map[string]any `json:"address,omitempty"`
+	Address *CreateAddressRequest `json:"address,omitempty"`
 	// Metadata is additional metadata. Optional.
 	// Metadata 元数据。可选。
 	Metadata map[string]any `json:"metadata,omitempty"`
@@ -70,7 +70,7 @@ type CreateCustomerRequest struct {
 	BusinessName string `json:"business_name,omitempty"`
 	// Address is the address information. Optional.
 	// Address 地址信息。可选。
-	Address map[string]any `json:"address,omitempty"`
+	Address *CreateAddressRequest `json:"address,omitempty"`
 	// Metadata is additional metadata. Optional.
 	// Metadata 元数据。可选。
 	Metadata map[string]any `json:"metadata,omitempty"`
@@ -99,7 +99,7 @@ type UpdateCustomerRequest struct {
 	BusinessName string `json:"business_name,omitempty"`
 	// Address is the address information. Optional.
 	// Address 地址信息。可选。
-	Address map[string]any `json:"address,omitempty"`
+	Address *CreateAddressRequest `json:"address,omitempty"`
 	// Metadata is additional metadata. Optional.
 	// Metadata 元数据。可选。
 	Metadata map[string]any `json:"metadata,omitempty"`

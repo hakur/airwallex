@@ -6,6 +6,23 @@ import (
 	"github.com/hakur/airwallex/sdk"
 )
 
+// FailureDetails represents failure details for a payment attempt.
+// FailureDetails 表示支付尝试的失败详情。
+type FailureDetails struct {
+	// Code is the Airwallex failure code.
+	// Code Airwallex 失败代码。
+	Code string `json:"code,omitempty"`
+	// Message is the human-readable failure description.
+	// Message 失败描述。
+	Message string `json:"message,omitempty"`
+	// TraceID is the unique identifier for tracing the failure.
+	// TraceID 用于追踪失败的唯一标识符。
+	TraceID string `json:"trace_id,omitempty"`
+	// Details is additional provider-specific details.
+	// Details 额外的提供商特定详情（动态字段）。
+	Details map[string]any `json:"details,omitempty"`
+}
+
 // PaymentAttempt represents a payment attempt.
 // PaymentAttempt 表示支付尝试信息。
 type PaymentAttempt struct {
@@ -24,7 +41,7 @@ type PaymentAttempt struct {
 	// FailureCode 失败代码。可选。
 	FailureCode string `json:"failure_code,omitempty"`
 	// FailureDetails 失败详情。可选。
-	FailureDetails map[string]any `json:"failure_details,omitempty"`
+	FailureDetails *FailureDetails `json:"failure_details,omitempty"`
 	// CreatedAt 创建时间。必填。
 	CreatedAt string `json:"created_at"`
 	// UpdatedAt 更新时间。可选。

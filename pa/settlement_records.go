@@ -58,7 +58,7 @@ type SettlementRecord struct {
 	// MerchantCustomerID 商户客户唯一标识符。可选。
 	MerchantCustomerID string `json:"merchant_customer_id,omitempty"`
 	// Metadata 元数据。可选。
-	Metadata map[string]string `json:"metadata,omitempty"`
+	Metadata map[string]any `json:"metadata,omitempty"`
 	// NetAmount 净额。可选。
 	NetAmount float64 `json:"net_amount,omitempty"`
 	// OrderID 订单唯一标识符。可选。
@@ -129,7 +129,7 @@ type SettlementRecordFeeDetail struct {
 	// PaymentMethodNumberOrID 支付方式编号或唯一标识符。可选。
 	PaymentMethodNumberOrID string `json:"payment_method_number_or_id,omitempty"`
 	// SettlementCurrency 结算货币代码。可选。
-	SettlementCurrency string `json:"settlement_currency,omitempty"`
+	SettlementCurrency sdk.Currency `json:"settlement_currency,omitempty"`
 	// SettlementSubtotalAmount 结算小计金额。可选。
 	SettlementSubtotalAmount float64 `json:"settlement_subtotal_amount,omitempty"`
 	// SettlementTaxAmount 结算税费金额。可选。

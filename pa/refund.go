@@ -48,7 +48,7 @@ type Refund struct {
 	Currency sdk.Currency `json:"currency"`
 	// Status is the refund status. Required.
 	// Status 退款状态。必填。
-	Status string `json:"status"`
+	Status RefundStatus `json:"status"`
 	// Reason is the refund reason. Optional.
 	// Reason 退款原因。可选。
 	Reason string `json:"reason,omitempty"`

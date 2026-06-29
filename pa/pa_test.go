@@ -37,9 +37,27 @@ func TestPaymentIntentLifecycle(t *testing.T) {
 		MerchantOrderID: "order-" + time.Now().Format("20060102150405"),
 		Amount:          100.0,
 		Currency:        sdk.CurrencyUSD,
+		OrderType:       "retail",
+		Order: &pa.CreateOrderRequest{
+			Cancellable:     true,
+			CreatedAt:       "2026-06-29T12:00:00Z",
+			PrepaymentModel: pa.PrepaymentModelFull,
+		},
+		Shipping: &pa.CreateShippingRequest{
+			PhoneNumber:    "+1234567890",
+			ShippingMethod: "express",
+		},
+		Billing: &pa.CreateBillingRequest{
+			FirstName: "Test",
+			LastName:  "User",
+			Address:   &pa.CreateAddressRequest{CountryCode: "US", City: "San Francisco"},
+		},
 	})
 	require.NoError(t, err, "create payment intent failed")
 	t.Logf("created payment intent: %s status=%s", created.ID, created.Status)
+	if created.Customer != nil {
+		t.Logf("payment intent has customer: %s %s", created.Customer.FirstName, created.Customer.LastName)
+	}
 
 	fetched, err := svc.GetPaymentIntent(ctx, created.ID)
 	require.NoError(t, err, "get payment intent failed")
@@ -80,6 +98,8 @@ func TestPaymentIntentLifecycle(t *testing.T) {
 				Name:        "Test User",
 			},
 		},
+		Surcharge: &pa.CreateSurchargeRequest{Amount: 5.0},
+		Tip:       &pa.CreateTipRequest{Amount: 2.0},
 	})
 	require.NoError(t, err, "confirm payment intent for capture failed")
 	t.Logf("confirmed capture PI: %s status=%s", confirmedCapture.ID, confirmedCapture.Status)
@@ -118,6 +138,7 @@ func TestCustomerLifecycle(t *testing.T) {
 		Email:              "test-" + time.Now().Format("20060102150405") + "@example.com",
 		FirstName:          "Test",
 		LastName:           "User",
+		Address:            &pa.CreateAddressRequest{CountryCode: "US", City: "San Francisco"},
 	})
 	require.NoError(t, err, "create customer failed")
 	t.Logf("created customer: %s", created.ID)
@@ -129,6 +150,7 @@ func TestCustomerLifecycle(t *testing.T) {
 	updated, err := svc.UpdateCustomer(ctx, created.ID, &pa.UpdateCustomerRequest{
 		RequestID: "cus-upd-" + time.Now().Format("20060102150405"),
 		FirstName: "Updated",
+		Address:   &pa.CreateAddressRequest{CountryCode: "CN", City: "Shanghai"},
 	})
 	require.NoError(t, err, "update customer failed")
 	assert.Equal(t, "Updated", updated.FirstName, "customer first name not updated")
@@ -255,7 +277,7 @@ func TestPaymentConsentLifecycle(t *testing.T) {
 	consent, err := svc.CreatePaymentConsent(ctx, &pa.CreatePaymentConsentRequest{
 		RequestID:       "pc-" + time.Now().Format("20060102150405"),
 		CustomerID:      cust.ID,
-		NextTriggeredBy: "customer",
+		NextTriggeredBy: pa.PaymentConsentTriggerCustomer,
 	})
 	if err != nil {
 		require.Error(t, err, "create consent blocked")
@@ -572,7 +594,7 @@ func TestCustomsDeclarationLifecycle(t *testing.T) {
 			OrderNumber: "SO-001",
 			Amount:      100.0,
 			ShippingFee: 10.0,
-			Currency:    string(sdk.CurrencyUSD),
+			Currency:    sdk.CurrencyUSD,
 		},
 	})
 	if err != nil {
@@ -639,6 +661,9 @@ func TestFundsSplitLifecycle(t *testing.T) {
 	}
 	require.NotEmpty(t, created.ID, "funds split id should not be empty")
 	t.Logf("created funds split: %s", created.ID)
+	if created.UpdatedAt != "" {
+		t.Logf("funds split updated_at: %s", created.UpdatedAt)
+	}
 
 	fetched, err := svc.GetFundsSplit(ctx, created.ID)
 	if err != nil {
@@ -689,6 +714,9 @@ func TestFundsSplitReversalLifecycle(t *testing.T) {
 	}
 	require.NotEmpty(t, created.ID, "funds split reversal id should not be empty")
 	t.Logf("created funds split reversal: %s", created.ID)
+	if created.UpdatedAt != "" {
+		t.Logf("funds split reversal updated_at: %s", created.UpdatedAt)
+	}
 
 	fetched, err := svc.GetFundsSplitReversal(ctx, created.ID)
 	if err != nil {
