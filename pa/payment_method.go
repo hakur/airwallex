@@ -144,8 +144,8 @@ type CardPaymentMethod struct {
 	ExpiryMonth string `json:"expiry_month"`
 	// ExpiryYear 过期年份。必填。
 	ExpiryYear string `json:"expiry_year"`
-	// CVC is the card security code. Optional.
-	// CVC 安全码。可选。
+	// CVC is the card security code.
+	// CVC 安全码。
 	CVC string `json:"cvc,omitempty"`
 	// Name is the cardholder name. Optional.
 	// Name 持卡人姓名。可选。
