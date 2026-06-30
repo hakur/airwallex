@@ -534,21 +534,6 @@ type CreatePaymentIntentRequest struct {
 	ReturnURL string `json:"return_url,omitempty"`
 	// Metadata 元数据。可选。
 	Metadata map[string]any `json:"metadata,omitempty"`
-	// SetupFuturePayment 是否设置未来支付。可选。
-	SetupFuturePayment bool `json:"setup_future_payment,omitempty"`
-	// NotificationURL 通知地址。可选。
-	NotificationURL string `json:"notification_url,omitempty"`
-	// PaymentType 支付类型。可选。
-	PaymentType string `json:"payment_type,omitempty"`
-	// PlatformInitiated indicates whether initiated by platform. Optional.
-	// PlatformInitiated 是否平台发起。可选。
-	PlatformInitiated bool `json:"platform_initiated,omitempty"`
-	// Force3DS indicates whether to force 3D Secure. Optional.
-	// Force3DS 是否强制 3D Secure。可选。
-	Force3DS bool `json:"force_3ds,omitempty"`
-	// PaymentMethodTypes are the supported payment method types. Optional.
-	// PaymentMethodTypes 支持的支付方式类型列表。可选。
-	PaymentMethodTypes []string `json:"payment_method_types,omitempty"`
 	// PaymentConsentID is the related PaymentConsent ID. Optional.
 	// PaymentConsentID 关联的 PaymentConsent ID。可选。
 	PaymentConsentID string `json:"payment_consent_id,omitempty"`
@@ -613,21 +598,6 @@ type UpdatePaymentIntentRequest struct {
 	// Metadata is additional metadata. Optional.
 	// Metadata 元数据。可选。
 	Metadata map[string]any `json:"metadata,omitempty"`
-	// SetupFuturePayment indicates whether to set up future payment. Optional.
-	// SetupFuturePayment 是否设置未来支付。可选。
-	SetupFuturePayment bool `json:"setup_future_payment,omitempty"`
-	// NotificationURL is the notification URL. Optional.
-	// NotificationURL 通知地址。可选。
-	NotificationURL string `json:"notification_url,omitempty"`
-	// PaymentType is the payment type. Optional.
-	// PaymentType 支付类型。可选。
-	PaymentType string `json:"payment_type,omitempty"`
-	// Force3DS indicates whether to force 3D Secure. Optional.
-	// Force3DS 是否强制 3D Secure。可选。
-	Force3DS bool `json:"force_3ds,omitempty"`
-	// PaymentMethodTypes are the supported payment method types. Optional.
-	// PaymentMethodTypes 支持的支付方式类型列表。可选。
-	PaymentMethodTypes []string `json:"payment_method_types,omitempty"`
 	// PaymentConsentID is the related PaymentConsent ID. Optional.
 	// PaymentConsentID 关联的 PaymentConsent ID。可选。
 	PaymentConsentID string `json:"payment_consent_id,omitempty"`
@@ -678,15 +648,6 @@ type ConfirmPaymentIntentRequest struct {
 	// Metadata is additional metadata. Optional.
 	// Metadata 元数据。可选。
 	Metadata map[string]any `json:"metadata,omitempty"`
-	// SetupFuturePayment indicates whether to set up future payment. Optional.
-	// SetupFuturePayment 是否设置未来支付。可选。
-	SetupFuturePayment bool `json:"setup_future_payment,omitempty"`
-	// NotificationURL is the notification URL. Optional.
-	// NotificationURL 通知地址。可选。
-	NotificationURL string `json:"notification_url,omitempty"`
-	// PaymentType is the payment type. Optional.
-	// PaymentType 支付类型。可选。
-	PaymentType string `json:"payment_type,omitempty"`
 	// OrderType is the industry category of the order. Maximum 128 characters.
 	// OrderType 订单行业类别。最多128个字符。
 	OrderType string `json:"type,omitempty"`
