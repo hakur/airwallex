@@ -130,7 +130,7 @@ type CreateQuoteRequest struct {
 }
 
 // CreateQuote creates a foreign exchange quote.
-// 官方文档: https://www.airwallex.com/docs/api/fx/quotes/create.md
+// 官方文档: https://www.airwallex.com/docs/api/transactional_fx/quotes/create.md
 // CreateQuote 创建外汇报价。
 func (s *Service) CreateQuote(ctx context.Context, req *CreateQuoteRequest, opts ...sdk.RequestOption) (*Quote, error) {
 	var resp Quote
@@ -139,7 +139,7 @@ func (s *Service) CreateQuote(ctx context.Context, req *CreateQuoteRequest, opts
 }
 
 // GetQuote retrieves a foreign exchange quote by ID.
-// 官方文档: https://www.airwallex.com/docs/api/fx/quotes/retrieve.md
+// 官方文档: https://www.airwallex.com/docs/api/transactional_fx/quotes/retrieve.md
 // GetQuote 根据ID获取外汇报价。
 func (s *Service) GetQuote(ctx context.Context, id string, opts ...sdk.RequestOption) (*Quote, error) {
 	var resp Quote

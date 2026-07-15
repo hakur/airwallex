@@ -272,7 +272,7 @@ type CreateConversionRequest struct {
 }
 
 // CreateConversion creates a foreign exchange conversion.
-// 官方文档: https://www.airwallex.com/docs/api/fx/conversions/create.md
+// 官方文档: https://www.airwallex.com/docs/api/transactional_fx/conversions/create.md
 // CreateConversion 创建外汇兑换。
 func (s *Service) CreateConversion(ctx context.Context, req *CreateConversionRequest, opts ...sdk.RequestOption) (*Conversion, error) {
 	var resp Conversion
@@ -281,7 +281,7 @@ func (s *Service) CreateConversion(ctx context.Context, req *CreateConversionReq
 }
 
 // GetConversion retrieves a foreign exchange conversion by ID.
-// 官方文档: https://www.airwallex.com/docs/api/fx/conversions/retrieve.md
+// 官方文档: https://www.airwallex.com/docs/api/transactional_fx/conversions/retrieve.md
 // GetConversion 根据ID获取外汇兑换。
 func (s *Service) GetConversion(ctx context.Context, id string, opts ...sdk.RequestOption) (*Conversion, error) {
 	var resp Conversion
@@ -290,7 +290,7 @@ func (s *Service) GetConversion(ctx context.Context, id string, opts ...sdk.Requ
 }
 
 // ListConversions lists foreign exchange conversions.
-// 官方文档: https://www.airwallex.com/docs/api/fx/conversions/list.md
+// 官方文档: https://www.airwallex.com/docs/api/transactional_fx/conversions/list.md
 // ListConversions 列出外汇兑换。
 func (s *Service) ListConversions(ctx context.Context, opts ...sdk.RequestOption) (*sdk.ListResult[Conversion], error) {
 	var resp sdk.ListResult[Conversion]

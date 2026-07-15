@@ -58,7 +58,7 @@ type GetRatesRequest struct {
 }
 
 // GetRates retrieves current exchange rates.
-// 官方文档: https://www.airwallex.com/docs/api/fx/rates/retrieve.md
+// 官方文档: https://www.airwallex.com/docs/api/transactional_fx/rates/current.md
 // GetRates 获取当前汇率。
 func (s *Service) GetRates(ctx context.Context, req *GetRatesRequest, opts ...sdk.RequestOption) (*Rate, error) {
 	var resp Rate
@@ -68,10 +68,10 @@ func (s *Service) GetRates(ctx context.Context, req *GetRatesRequest, opts ...sd
 		query.Set("buy_currency", string(req.BuyCurrency))
 		query.Set("sell_currency", string(req.SellCurrency))
 		if req.BuyAmount > 0 {
-			query.Set("buy_amount", fmt.Sprintf("%.0f", req.BuyAmount))
+			query.Set("buy_amount", fmt.Sprintf("%v", req.BuyAmount))
 		}
 		if req.SellAmount > 0 {
-			query.Set("sell_amount", fmt.Sprintf("%.0f", req.SellAmount))
+			query.Set("sell_amount", fmt.Sprintf("%v", req.SellAmount))
 		}
 		if req.ConversionDate != "" {
 			query.Set("conversion_date", req.ConversionDate)

@@ -136,7 +136,7 @@ type ListConversionAmendmentsRequest struct {
 }
 
 // CreateConversionAmendment creates a foreign exchange conversion amendment.
-// 官方文档: https://www.airwallex.com/docs/api/fx/conversion_amendments/create.md
+// 官方文档: https://www.airwallex.com/docs/api/transactional_fx/conversion_amendments/create.md
 // CreateConversionAmendment 创建外汇兑换修改。
 func (s *Service) CreateConversionAmendment(ctx context.Context, req *CreateConversionAmendmentRequest, opts ...sdk.RequestOption) (*ConversionAmendment, error) {
 	var resp ConversionAmendment
@@ -145,7 +145,7 @@ func (s *Service) CreateConversionAmendment(ctx context.Context, req *CreateConv
 }
 
 // ListConversionAmendments lists all amendments for a specified conversion.
-// 官方文档: https://www.airwallex.com/docs/api/fx/conversion_amendments/list.md
+// 官方文档: https://www.airwallex.com/docs/api/transactional_fx/conversion_amendments/list.md
 // ListConversionAmendments 列出指定兑换的所有修改。
 func (s *Service) ListConversionAmendments(ctx context.Context, req *ListConversionAmendmentsRequest, opts ...sdk.RequestOption) (*sdk.ListResult[ConversionAmendment], error) {
 	var resp sdk.ListResult[ConversionAmendment]
@@ -154,7 +154,7 @@ func (s *Service) ListConversionAmendments(ctx context.Context, req *ListConvers
 }
 
 // CreateConversionAmendmentQuote creates a foreign exchange conversion amendment quote (estimated fees).
-// 官方文档: https://www.airwallex.com/docs/api/fx/conversion_amendments/quote.md
+// 官方文档: https://www.airwallex.com/docs/api/transactional_fx/conversion_amendments/quote.md
 // CreateConversionAmendmentQuote 创建外汇兑换修改报价（获取预估费用）。
 func (s *Service) CreateConversionAmendmentQuote(ctx context.Context, req *CreateConversionAmendmentRequest, opts ...sdk.RequestOption) (*ConversionAmendmentQuote, error) {
 	var resp ConversionAmendmentQuote
@@ -163,7 +163,7 @@ func (s *Service) CreateConversionAmendmentQuote(ctx context.Context, req *Creat
 }
 
 // GetConversionAmendment retrieves a foreign exchange conversion amendment by ID.
-// 官方文档: https://www.airwallex.com/docs/api/fx/conversion_amendments/retrieve.md
+// 官方文档: https://www.airwallex.com/docs/api/transactional_fx/conversion_amendments/retrieve.md
 // GetConversionAmendment 根据ID获取外汇兑换修改。
 func (s *Service) GetConversionAmendment(ctx context.Context, id string, opts ...sdk.RequestOption) (*ConversionAmendment, error) {
 	var resp ConversionAmendment

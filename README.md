@@ -116,10 +116,10 @@ client.Payouts().CreateTransfer(ctx, req, sdk.WithRequestOnBehalfOf("acct_456"))
 | `finance/financial_reports.go` | `https://www.airwallex.com/docs/api/finance/financial_reports.md` |
 | `finance/financial_transaction.go` | `https://www.airwallex.com/docs/api/finance/financial_transactions.md` |
 | `finance/settlement.go` | `https://www.airwallex.com/docs/api/finance/settlements.md` |
-| `fx/conversion.go` | `https://www.airwallex.com/docs/api/fx/conversions.md` |
-| `fx/conversion_amendment.go` | `https://www.airwallex.com/docs/api/fx/conversion_amendments.md` |
-| `fx/quote.go` | `https://www.airwallex.com/docs/api/fx/quotes.md` |
-| `fx/rate.go` | `https://www.airwallex.com/docs/api/fx/rates.md` |
+| `fx/conversion.go` | `https://www.airwallex.com/docs/api/transactional_fx/conversions.md` |
+| `fx/conversion_amendment.go` | `https://www.airwallex.com/docs/api/transactional_fx/conversion_amendments.md` |
+| `fx/quote.go` | `https://www.airwallex.com/docs/api/transactional_fx/quotes.md` |
+| `fx/rate.go` | `https://www.airwallex.com/docs/api/transactional_fx/rates.md` |
 | `issuing/authorization.go` | `https://www.airwallex.com/docs/api/issuing/authorizations.md` |
 | `issuing/card.go` | `https://www.airwallex.com/docs/api/issuing/cards.md` |
 | `issuing/cardholder.go` | `https://www.airwallex.com/docs/api/issuing/cardholders.md` |
