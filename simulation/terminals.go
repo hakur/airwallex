@@ -53,21 +53,21 @@ type SimulateTerminalTurnOnRequest struct {
 
 // SimulateTerminalConfirmPaymentIntent confirms a terminal payment intent.
 // SimulateTerminalConfirmPaymentIntent 终端确认支付。
-// 官方文档: https://www.airwallex.com/docs/api/simulation/terminals/confirm_payment_intent.md
+// 官方文档: https://www.airwallex.com/docs/api/simulation/terminal_simulation/confirm_payment_intent_terminals.md
 func (s *Service) SimulateTerminalConfirmPaymentIntent(ctx context.Context, req *SimulateTerminalConfirmPaymentIntentRequest, opts ...sdk.RequestOption) error {
 	return s.doer.Do(ctx, "POST", "/api/v1/simulation/pa/pos/terminals/confirm_payment_intent", req, nil, opts...)
 }
 
 // SimulateTerminalGenerateActivationCode generates a terminal activation code.
 // SimulateTerminalGenerateActivationCode 生成终端激活码。
-// 官方文档: https://www.airwallex.com/docs/api/simulation/terminals/generate_activation_code.md
+// 官方文档: https://www.airwallex.com/docs/api/simulation/terminal_simulation/generate_activation_code_terminals.md
 func (s *Service) SimulateTerminalGenerateActivationCode(ctx context.Context, req *SimulateTerminalGenerateActivationCodeRequest, opts ...sdk.RequestOption) error {
 	return s.doer.Do(ctx, "POST", "/api/v1/simulation/pa/pos/terminals/generate_activation_code", req, nil, opts...)
 }
 
 // SimulateTerminalPaymentScenarios retrieves terminal payment scenario list.
 // SimulateTerminalPaymentScenarios 获取终端支付场景列表。
-// 官方文档: https://www.airwallex.com/docs/api/simulation/terminals/payment_scenarios.md
+// 官方文档: https://www.airwallex.com/docs/api/simulation/terminal_simulation/payment_scenarios.md
 func (s *Service) SimulateTerminalPaymentScenarios(ctx context.Context, opts ...sdk.RequestOption) (*TerminalPaymentScenariosResponse, error) {
 	var resp TerminalPaymentScenariosResponse
 	err := s.doer.Do(ctx, "GET", "/api/v1/simulation/pa/pos/terminals/payment_scenarios", nil, &resp, opts...)
@@ -76,14 +76,14 @@ func (s *Service) SimulateTerminalPaymentScenarios(ctx context.Context, opts ...
 
 // SimulateTerminalTurnOff turns off a terminal.
 // SimulateTerminalTurnOff 关闭终端。
-// 官方文档: https://www.airwallex.com/docs/api/simulation/terminals/turn_off.md
+// 官方文档: https://www.airwallex.com/docs/api/simulation/terminal_simulation/turn_off_terminals.md
 func (s *Service) SimulateTerminalTurnOff(ctx context.Context, req *SimulateTerminalTurnOffRequest, opts ...sdk.RequestOption) error {
 	return s.doer.Do(ctx, "POST", "/api/v1/simulation/pa/pos/terminals/turn_off", req, nil, opts...)
 }
 
 // SimulateTerminalTurnOn turns on a terminal.
 // SimulateTerminalTurnOn 打开终端。
-// 官方文档: https://www.airwallex.com/docs/api/simulation/terminals/turn_on.md
+// 官方文档: https://www.airwallex.com/docs/api/simulation/terminal_simulation/turn_on_terminals.md
 func (s *Service) SimulateTerminalTurnOn(ctx context.Context, req *SimulateTerminalTurnOnRequest, opts ...sdk.RequestOption) error {
 	return s.doer.Do(ctx, "POST", "/api/v1/simulation/pa/pos/terminals/turn_on", req, nil, opts...)
 }

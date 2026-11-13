@@ -163,7 +163,14 @@ func TestBeneficiaryLifecycle(t *testing.T) {
 		t.Logf("verify account valid=%v", verifyResp.Valid)
 	}
 
-	_, err = svc.GenerateAPISchema(ctx)
+	_, err = svc.GenerateAPISchema(ctx, &payouts.GenerateSchemaRequest{
+		Type:                payouts.BeneficiaryTypeBankAccount,
+		EntityType:          "PERSONAL",
+		BankCountryCode:     sdk.CountryCodeUS,
+		AccountCurrency:     sdk.CurrencyUSD,
+		TransferMethod:      payouts.TransferMethodLocal,
+		LocalClearingSystem: "ACH",
+	})
 	if err != nil {
 		require.Error(t, err, "generate api schema blocked")
 		t.Logf("🔒 endpoint blocked: %v", err)
@@ -171,7 +178,14 @@ func TestBeneficiaryLifecycle(t *testing.T) {
 		t.Logf("generate api schema succeeded")
 	}
 
-	_, err = svc.GenerateFormSchema(ctx)
+	_, err = svc.GenerateFormSchema(ctx, &payouts.GenerateSchemaRequest{
+		Type:                payouts.BeneficiaryTypeBankAccount,
+		EntityType:          "PERSONAL",
+		BankCountryCode:     sdk.CountryCodeUS,
+		AccountCurrency:     sdk.CurrencyUSD,
+		TransferMethod:      payouts.TransferMethodLocal,
+		LocalClearingSystem: "ACH",
+	})
 	if err != nil {
 		require.Error(t, err, "generate form schema blocked")
 		t.Logf("🔒 endpoint blocked: %v", err)

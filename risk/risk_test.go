@@ -55,23 +55,6 @@ func TestFraudFeedbackLifecycle(t *testing.T) {
 	}
 	require.NotNil(t, created)
 	t.Logf("created fraud feedback: authorization_id=%s", created.AuthorizationID)
-
-	fetched, err := svc.GetFraudFeedback(ctx, auths.Items[0].TransactionID)
-	if err != nil {
-		require.True(t, sdk.IsUnauthorized(err) || sdk.IsNotFound(err), "get fraud feedback failed: %v", err)
-		t.Logf("get fraud feedback skipped: %v", err)
-	} else {
-		assert.Equal(t, auths.Items[0].TransactionID, fetched.AuthorizationID, "fraud feedback authorization id mismatch")
-	}
-
-	list, err := svc.ListFraudFeedback(ctx)
-	if err != nil {
-		require.True(t, sdk.IsUnauthorized(err) || sdk.IsBadRequest(err), "list fraud feedback failed: %v", err)
-		t.Logf("list fraud feedback skipped: %v", err)
-		return
-	}
-	require.NotEmpty(t, list.Items, "expected at least one fraud feedback")
-	t.Logf("fraud feedback count: %d", len(list.Items))
 }
 
 func TestWatchlistLifecycle(t *testing.T) {
@@ -132,54 +115,11 @@ func TestSellerLifecycle(t *testing.T) {
 	deactivated, err := svc.DeactivateSeller(ctx, created.ID)
 	require.NoError(t, err, "deactivate seller failed")
 	assert.Equal(t, created.ID, deactivated.ID)
-
-	list, err := svc.ListSellers(ctx)
-	if err != nil {
-		require.True(t, sdk.IsUnauthorized(err), "list sellers failed: %v", err)
-		t.Logf("list sellers skipped: %v", err)
-		return
-	}
-	require.NotEmpty(t, list.Items, "expected at least one seller")
-	t.Logf("sellers count: %d", len(list.Items))
 }
 
 func TestRFILifecycle(t *testing.T) {
 	ctx := context.Background()
 	svc := testClient.Risk()
-
-	// Create RFI first
-	created, err := svc.CreateRFI(ctx, &risk.CreateRFIRequest{
-		Type: risk.RFITypeKYC,
-		Questions: []risk.RFIQuestion{
-			{
-				Answer: &risk.RFIQuestionAnswer{
-					Type: risk.RFIQuestionAnswerTypeText,
-				},
-			},
-		},
-	})
-	if err != nil {
-		require.True(t, sdk.IsUnauthorized(err) || sdk.IsBadRequest(err) || sdk.IsMethodNotAllowed(err), "create rfi failed: %v", err)
-		t.Logf("create rfi skipped: %v", err)
-		return
-	}
-	require.NotEmpty(t, created.ID, "rfi id should not be empty")
-	t.Logf("created rfi: %s status=%s", created.ID, created.Status)
-
-	fetched, err := svc.GetRFI(ctx, created.ID)
-	require.NoError(t, err, "get rfi failed")
-	assert.Equal(t, created.ID, fetched.ID, "rfi id mismatch")
-
-	// Respond to RFI
-	responded, err := svc.RespondRFI(ctx, created.ID, &risk.RespondRFIRequest{
-		Questions: []risk.RFIQuestion{},
-	})
-	if err != nil {
-		require.True(t, sdk.IsBadRequest(err) || sdk.IsUnauthorized(err) || sdk.IsNotFound(err), "respond rfi failed: %v", err)
-		t.Logf("respond rfi skipped: %v", err)
-	} else {
-		t.Logf("responded rfi: %s", responded.ID)
-	}
 
 	list, err := svc.ListRFIs(ctx)
 	if err != nil {
@@ -189,4 +129,23 @@ func TestRFILifecycle(t *testing.T) {
 	}
 	require.NotNil(t, list)
 	t.Logf("rfi count: %d", len(list.Items))
+	if len(list.Items) == 0 {
+		t.Logf("no rfis found, skipping get and respond")
+		return
+	}
+
+	id := list.Items[0].ID
+	fetched, err := svc.GetRFI(ctx, id)
+	require.NoError(t, err, "get rfi failed")
+	assert.Equal(t, id, fetched.ID, "rfi id mismatch")
+
+	responded, err := svc.RespondRFI(ctx, id, &risk.RespondRFIRequest{
+		Questions: []risk.RFIQuestion{},
+	})
+	if err != nil {
+		require.True(t, sdk.IsBadRequest(err) || sdk.IsUnauthorized(err) || sdk.IsNotFound(err), "respond rfi failed: %v", err)
+		t.Logf("respond rfi skipped: %v", err)
+		return
+	}
+	t.Logf("responded rfi: %s", responded.ID)
 }

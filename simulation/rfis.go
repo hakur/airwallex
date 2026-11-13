@@ -63,21 +63,21 @@ type SimulateRFIFollowUpRequest struct {
 
 // SimulateRFICreate creates an RFI simulation.
 // SimulateRFICreate 创建 RFI。
-// 官方文档: https://www.airwallex.com/docs/api/simulation/rfis/create.md
+// 官方文档: https://www.airwallex.com/docs/api/simulation/request_for_information_rfi/create.md
 func (s *Service) SimulateRFICreate(ctx context.Context, req *SimulateRFICreateRequest, opts ...sdk.RequestOption) error {
 	return s.doer.Do(ctx, "POST", "/api/v1/simulation/rfis/create", req, nil, opts...)
 }
 
 // SimulateRFIClose closes an RFI simulation.
 // SimulateRFIClose 关闭 RFI。
-// 官方文档: https://www.airwallex.com/docs/api/simulation/rfis/close.md
+// 官方文档: https://www.airwallex.com/docs/api/simulation/request_for_information_rfi/close_rfis.md
 func (s *Service) SimulateRFIClose(ctx context.Context, rfiID string, opts ...sdk.RequestOption) error {
 	return s.doer.Do(ctx, "POST", "/api/v1/simulation/rfis/"+rfiID+"/close", nil, nil, opts...)
 }
 
 // SimulateRFIFollowUp follows up on an RFI simulation.
 // SimulateRFIFollowUp 跟进 RFI。
-// 官方文档: https://www.airwallex.com/docs/api/simulation/rfis/follow_up.md
+// 官方文档: https://www.airwallex.com/docs/api/simulation/request_for_information_rfi/follow_up_rfis.md
 func (s *Service) SimulateRFIFollowUp(ctx context.Context, rfiID string, req *SimulateRFIFollowUpRequest, opts ...sdk.RequestOption) error {
 	return s.doer.Do(ctx, "POST", "/api/v1/simulation/rfis/"+rfiID+"/follow_up", req, nil, opts...)
 }

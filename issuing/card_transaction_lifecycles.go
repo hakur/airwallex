@@ -48,7 +48,7 @@ type ListLifecyclesResponse struct {
 }
 
 // ListLifecycles retrieves the list of card transaction lifecycles.
-// 官方文档: https://www.airwallex.com/docs/api/issuing/card_transaction_lifecycles/lifecycles.md
+// 官方文档: https://www.airwallex.com/docs/api/issuing/card_transaction_lifecycles/list.md
 // ListLifecycles 获取卡交易生命周期列表。
 func (s *Service) ListLifecycles(ctx context.Context, req *ListLifecyclesRequest, opts ...sdk.RequestOption) (*ListLifecyclesResponse, error) {
 	var resp ListLifecyclesResponse
@@ -57,7 +57,7 @@ func (s *Service) ListLifecycles(ctx context.Context, req *ListLifecyclesRequest
 }
 
 // GetLifecycle retrieves a single card transaction lifecycle.
-// 官方文档: https://www.airwallex.com/docs/api/issuing/card_transaction_lifecycles/retrieve_lifecycles.md
+// 官方文档: https://www.airwallex.com/docs/api/issuing/card_transaction_lifecycles/retrieve.md
 // GetLifecycle 获取单个卡交易生命周期。
 func (s *Service) GetLifecycle(ctx context.Context, id string, opts ...sdk.RequestOption) (*Lifecycle, error) {
 	var resp Lifecycle

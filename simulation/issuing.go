@@ -190,19 +190,19 @@ func (s *Service) SimulateIssuingTransactionRefund(ctx context.Context, req *Sim
 
 // SimulateIssuingTransactionCapture captures an issuing transaction.
 // SimulateIssuingTransactionCapture 捕获发卡交易。
-// 官方文档: https://www.airwallex.com/docs/api/simulation/issuing/capture.md
+// 官方文档: https://www.airwallex.com/docs/api/simulation/issuing/capture_card_transaction_lifecycles.md
 func (s *Service) SimulateIssuingTransactionCapture(ctx context.Context, transactionID string, req *SimulateIssuingTransactionCaptureRequest, opts ...sdk.RequestOption) (*IssuingTransaction, error) {
 	var resp IssuingTransaction
-	err := s.doer.Do(ctx, "POST", "/api/v1/simulation/issuing/"+transactionID+"/capture", req, &resp, opts...)
+	err := s.doer.Do(ctx, "POST", "/api/v1/simulation/issuing/card_transaction_lifecycles/"+transactionID+"/capture", req, &resp, opts...)
 	return &resp, err
 }
 
 // SimulateIssuingTransactionReverse reverses an issuing transaction.
 // SimulateIssuingTransactionReverse 撤销发卡交易。
-// 官方文档: https://www.airwallex.com/docs/api/simulation/issuing/reverse.md
+// 官方文档: https://www.airwallex.com/docs/api/simulation/issuing/reverse_card_transaction_lifecycles.md
 func (s *Service) SimulateIssuingTransactionReverse(ctx context.Context, transactionID string, req *SimulateIssuingTransactionReverseRequest, opts ...sdk.RequestOption) (*IssuingTransaction, error) {
 	var resp IssuingTransaction
-	err := s.doer.Do(ctx, "POST", "/api/v1/simulation/issuing/"+transactionID+"/reverse", req, &resp, opts...)
+	err := s.doer.Do(ctx, "POST", "/api/v1/simulation/issuing/card_transaction_lifecycles/"+transactionID+"/reverse", req, &resp, opts...)
 	return &resp, err
 }
 

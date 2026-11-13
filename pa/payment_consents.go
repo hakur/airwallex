@@ -58,14 +58,6 @@ type CreatePaymentConsentRequest struct {
 	Metadata map[string]any `json:"metadata,omitempty"`
 }
 
-// CancelPaymentConsentRequest is the request to cancel a payment consent.
-// CancelPaymentConsentRequest 取消支付授权请求。
-type CancelPaymentConsentRequest struct {
-	// RequestID is the unique request identifier. Required.
-	// RequestID 请求唯一标识符。必填。
-	RequestID string `json:"request_id"`
-}
-
 // CreatePaymentConsent creates a payment consent.
 // CreatePaymentConsent 创建支付授权。
 // 官方文档: https://www.airwallex.com/docs/api/payments/payment_consents/create.md
@@ -81,15 +73,6 @@ func (s *Service) CreatePaymentConsent(ctx context.Context, req *CreatePaymentCo
 func (s *Service) GetPaymentConsent(ctx context.Context, id string, opts ...sdk.RequestOption) (*PaymentConsent, error) {
 	var resp PaymentConsent
 	err := s.doer.Do(ctx, "GET", "/api/v1/pa/payment_consents/"+id, nil, &resp, opts...)
-	return &resp, err
-}
-
-// CancelPaymentConsent cancels a payment consent.
-// CancelPaymentConsent 取消支付授权。
-// 官方文档: https://www.airwallex.com/docs/api/payments/payment_consents/cancel.md
-func (s *Service) CancelPaymentConsent(ctx context.Context, id string, req *CancelPaymentConsentRequest, opts ...sdk.RequestOption) (*PaymentConsent, error) {
-	var resp PaymentConsent
-	err := s.doer.Do(ctx, "POST", "/api/v1/pa/payment_consents/"+id+"/cancel", req, &resp, opts...)
 	return &resp, err
 }
 

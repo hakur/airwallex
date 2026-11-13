@@ -52,21 +52,3 @@ func (s *Service) CreateFraudFeedback(ctx context.Context, req *CreateFraudFeedb
 	err := s.doer.Do(ctx, "POST", "/api/v1/risk/issuing/fraud_feedback", req, &resp, opts...)
 	return &resp, err
 }
-
-// GetFraudFeedback retrieves fraud feedback by authorization ID.
-// GetFraudFeedback 根据授权ID获取发卡欺诈反馈。
-// 官方文档: https://www.airwallex.com/docs/api/risk/fraud_feedback_issuing/retrieve.md
-func (s *Service) GetFraudFeedback(ctx context.Context, authorizationID string, opts ...sdk.RequestOption) (*FraudFeedback, error) {
-	var resp FraudFeedback
-	err := s.doer.Do(ctx, "GET", "/api/v1/risk/issuing/fraud_feedback/"+authorizationID, nil, &resp, opts...)
-	return &resp, err
-}
-
-// ListFraudFeedback lists all issuing fraud feedback.
-// ListFraudFeedback 列出发卡欺诈反馈。
-// 官方文档: https://www.airwallex.com/docs/api/risk/fraud_feedback_issuing/list.md
-func (s *Service) ListFraudFeedback(ctx context.Context, opts ...sdk.RequestOption) (*sdk.ListResult[FraudFeedback], error) {
-	var resp sdk.ListResult[FraudFeedback]
-	err := s.doer.Do(ctx, "GET", "/api/v1/risk/issuing/fraud_feedback", nil, &resp, opts...)
-	return &resp, err
-}

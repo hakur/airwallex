@@ -155,17 +155,6 @@ func TestSimulateLinkedAccountOperations_InvalidID(t *testing.T) {
 	assert.True(t, sdk.IsBadRequest(err), "expected bad_request error, got: %v", err)
 }
 
-func TestSimulatePayoutPaymentTransition_InvalidID(t *testing.T) {
-	ctx := context.Background()
-	svc := testClient.Simulation()
-
-	err := svc.SimulatePayoutPaymentTransition(ctx, "payment-test-id", &simulation.SimulatePayoutPaymentTransitionRequest{
-		NextStatus: "COMPLETED",
-	})
-	require.Error(t, err, "expected error for invalid payment id")
-	assert.True(t, sdk.IsBadRequest(err), "expected bad_request error, got: %v", err)
-}
-
 func TestSimulateRFIOperations_InvalidRequests(t *testing.T) {
 	ctx := context.Background()
 	svc := testClient.Simulation()

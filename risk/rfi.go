@@ -409,26 +409,6 @@ type RespondRFIRequest struct {
 	Questions []RFIQuestion `json:"questions,omitempty"`
 }
 
-// CreateRFIRequest represents a request to create an RFI.
-// CreateRFIRequest 创建RFI请求。
-type CreateRFIRequest struct {
-	// Type is the RFI type. Required.
-	// Type RFI类型。必填。
-	Type RFIType `json:"type"`
-	// Questions is the list of questions. Optional.
-	// Questions 问题列表。可选。
-	Questions []RFIQuestion `json:"questions,omitempty"`
-}
-
-// CreateRFI creates a new Request for Information.
-// CreateRFI 创建信息请求。
-// 官方文档: https://www.airwallex.com/docs/api/risk/request_for_information_rfi/create.md
-func (s *Service) CreateRFI(ctx context.Context, req *CreateRFIRequest, opts ...sdk.RequestOption) (*RFI, error) {
-	var resp RFI
-	err := s.doer.Do(ctx, "POST", "/api/v1/rfis/create", req, &resp, opts...)
-	return &resp, err
-}
-
 // GetRFI retrieves an RFI by ID.
 // GetRFI 根据ID获取RFI。
 // 官方文档: https://www.airwallex.com/docs/api/risk/request_for_information_rfi/retrieve.md

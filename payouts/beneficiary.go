@@ -294,6 +294,23 @@ type VerifyAccountResponse struct {
 	Errors []map[string]any `json:"errors,omitempty"`
 }
 
+// GenerateSchemaRequest is the request to generate a beneficiary API schema.
+// GenerateSchemaRequest 生成收款人 API 模式请求。
+type GenerateSchemaRequest struct {
+	// AccountCurrency 账户货币。可选。
+	AccountCurrency sdk.Currency `json:"account_currency,omitempty"`
+	// BankCountryCode 银行国家代码。可选。
+	BankCountryCode sdk.CountryCode `json:"bank_country_code,omitempty"`
+	// EntityType 实体类型。可选。
+	EntityType string `json:"entity_type,omitempty"`
+	// LocalClearingSystem 本地清算系统。可选。
+	LocalClearingSystem string `json:"local_clearing_system,omitempty"`
+	// TransferMethod 转账方式。可选。
+	TransferMethod TransferMethod `json:"transfer_method,omitempty"`
+	// Type 收款人类型。可选。
+	Type BeneficiaryType `json:"type,omitempty"`
+}
+
 // SupportedFinancialInstitution represents a supported financial institution.
 // SupportedFinancialInstitution 支持的金融机构。
 type SupportedFinancialInstitution struct {
@@ -384,19 +401,19 @@ func (s *Service) VerifyAccount(ctx context.Context, req *VerifyAccountRequest, 
 
 // GenerateAPISchema generates beneficiary API schema.
 // GenerateAPISchema 生成收款人API模式。
-// 官方文档: https://www.airwallex.com/docs/api/payouts/beneficiaries/generate_api_schema.md
-func (s *Service) GenerateAPISchema(ctx context.Context, opts ...sdk.RequestOption) (map[string]any, error) {
+// 官方文档: https://www.airwallex.com/docs/api/payouts/beneficiaries/generate_beneficiary_api_schemas.md
+func (s *Service) GenerateAPISchema(ctx context.Context, req *GenerateSchemaRequest, opts ...sdk.RequestOption) (map[string]any, error) {
 	var resp map[string]any
-	err := s.doer.Do(ctx, "POST", "/api/v1/beneficiaries/generate_api_schema", nil, &resp, opts...)
+	err := s.doer.Do(ctx, "POST", "/api/v1/beneficiary_api_schemas/generate", req, &resp, opts...)
 	return resp, err
 }
 
 // GenerateFormSchema generates beneficiary form schema.
 // GenerateFormSchema 生成收款人表单模式。
-// 官方文档: https://www.airwallex.com/docs/api/payouts/beneficiaries/generate_form_schema.md
-func (s *Service) GenerateFormSchema(ctx context.Context, opts ...sdk.RequestOption) (map[string]any, error) {
+// 官方文档: https://www.airwallex.com/docs/api/payouts/beneficiaries/generate_beneficiary_form_schemas.md
+func (s *Service) GenerateFormSchema(ctx context.Context, req *GenerateSchemaRequest, opts ...sdk.RequestOption) (map[string]any, error) {
 	var resp map[string]any
-	err := s.doer.Do(ctx, "POST", "/api/v1/beneficiaries/generate_form_schema", nil, &resp, opts...)
+	err := s.doer.Do(ctx, "POST", "/api/v1/beneficiary_form_schemas/generate", req, &resp, opts...)
 	return resp, err
 }
 

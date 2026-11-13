@@ -2,8 +2,6 @@ package pa
 
 import (
 	"context"
-	"net/url"
-	"strconv"
 
 	"github.com/hakur/airwallex/sdk"
 )
@@ -180,20 +178,6 @@ type RedeclareCustomsDeclarationRequest struct {
 	RequestID string `json:"request_id"`
 }
 
-// ListCustomsDeclarationsRequest is the request to list customs declarations.
-// ListCustomsDeclarationsRequest 列出海关申报请求参数。
-type ListCustomsDeclarationsRequest struct {
-	// Page is the page number. Optional (query param).
-	// Page 页码。可选（查询参数）。
-	Page int32 `json:"-"`
-	// PageSize is the page size. Optional (query param).
-	// PageSize 每页数量。可选（查询参数）。
-	PageSize int32 `json:"-"`
-	// Status is the declaration status. Optional (query param).
-	// Status 申报状态。可选（查询参数）。
-	Status string `json:"-"`
-}
-
 // CreateCustomsDeclaration creates a customs declaration.
 // CreateCustomsDeclaration 创建海关申报。
 // 官方文档: https://www.airwallex.com/docs/api/payments/customs_declarations/create.md
@@ -227,30 +211,5 @@ func (s *Service) UpdateCustomsDeclaration(ctx context.Context, id string, req *
 func (s *Service) RedeclareCustomsDeclaration(ctx context.Context, id string, req *RedeclareCustomsDeclarationRequest, opts ...sdk.RequestOption) (*CustomsDeclaration, error) {
 	var resp CustomsDeclaration
 	err := s.doer.Do(ctx, "POST", "/api/v1/pa/customs_declarations/"+id+"/redeclare", req, &resp, opts...)
-	return &resp, err
-}
-
-// ListCustomsDeclarations lists customs declarations.
-// ListCustomsDeclarations 列出海关申报。
-// 官方文档: https://www.airwallex.com/docs/api/payments/customs_declarations/list.md
-func (s *Service) ListCustomsDeclarations(ctx context.Context, req *ListCustomsDeclarationsRequest, opts ...sdk.RequestOption) (*sdk.ListResult[CustomsDeclaration], error) {
-	path := "/api/v1/pa/customs_declarations"
-	if req != nil {
-		q := url.Values{}
-		if req.Page > 0 {
-			q.Set("page", strconv.Itoa(int(req.Page)))
-		}
-		if req.PageSize > 0 {
-			q.Set("page_size", strconv.Itoa(int(req.PageSize)))
-		}
-		if req.Status != "" {
-			q.Set("status", req.Status)
-		}
-		if len(q) > 0 {
-			path += "?" + q.Encode()
-		}
-	}
-	var resp sdk.ListResult[CustomsDeclaration]
-	err := s.doer.Do(ctx, "GET", path, nil, &resp, opts...)
 	return &resp, err
 }
