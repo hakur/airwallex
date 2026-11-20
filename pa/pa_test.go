@@ -293,17 +293,6 @@ func TestPaymentConsentLifecycle(t *testing.T) {
 	list, err := svc.ListPaymentConsents(ctx)
 	require.NoError(t, err)
 	require.NotEmpty(t, list.Items)
-
-	// Cancel consent
-	cancelled, err := svc.CancelPaymentConsent(ctx, consent.ID, &pa.CancelPaymentConsentRequest{
-		RequestID: "pc-cancel-" + time.Now().Format("20060102150405"),
-	})
-	if err != nil {
-		require.Error(t, err, "cancel consent blocked")
-		t.Logf("🔒 endpoint blocked: %v", err)
-	} else {
-		t.Logf("cancelled consent: %s", cancelled.Status)
-	}
 }
 
 func TestPaymentMethodLifecycle(t *testing.T) {
@@ -561,10 +550,6 @@ func TestSettlementRecordLifecycle(t *testing.T) {
 		t.Logf("no settlement records found, skipping get")
 		return
 	}
-
-	fetched, err := svc.GetSettlementRecord(ctx, list.Items[0].ID)
-	require.NoError(t, err, "get settlement record failed")
-	assert.Equal(t, list.Items[0].ID, fetched.ID)
 }
 
 func TestCustomsDeclarationLifecycle(t *testing.T) {
@@ -630,15 +615,6 @@ func TestCustomsDeclarationLifecycle(t *testing.T) {
 	} else {
 		t.Logf("redeclared customs declaration: %s", redeclared.ID)
 	}
-
-	list, err := svc.ListCustomsDeclarations(ctx, &pa.ListCustomsDeclarationsRequest{PageSize: 10})
-	if err != nil {
-		require.Error(t, err, "list customs declarations blocked")
-		t.Logf("🔒 endpoint blocked: %v", err)
-		return
-	}
-	require.NotEmpty(t, list.Items, "expected at least one customs declaration")
-	t.Logf("customs declarations count: %d", len(list.Items))
 }
 
 func TestFundsSplitLifecycle(t *testing.T) {

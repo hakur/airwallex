@@ -116,7 +116,7 @@ client.Payouts().CreateTransfer(ctx, req, sdk.WithRequestOnBehalfOf("acct_456"))
 | `finance/financial_reports.go` | `https://www.airwallex.com/docs/api/finance/financial_reports.md` |
 | `finance/financial_transaction.go` | `https://www.airwallex.com/docs/api/finance/financial_transactions.md` |
 | `finance/settlement.go` | `https://www.airwallex.com/docs/api/finance/settlements.md` |
-| `fx/conversion.go` | `https://www.airwallex.com/docs/api/transactional_fx/conversions.md` |
+| `fx/conversion.go` | `https://www.airwallex.com/docs/api/transactional_fx/conversion.md` |
 | `fx/conversion_amendment.go` | `https://www.airwallex.com/docs/api/transactional_fx/conversion_amendments.md` |
 | `fx/quote.go` | `https://www.airwallex.com/docs/api/transactional_fx/quotes.md` |
 | `fx/rate.go` | `https://www.airwallex.com/docs/api/transactional_fx/rates.md` |
@@ -169,7 +169,6 @@ client.Payouts().CreateTransfer(ctx, req, sdk.WithRequestOnBehalfOf("acct_456"))
 | `simulation/issuing.go` | `https://www.airwallex.com/docs/api/simulation/issuing.md` |
 | `simulation/linked_accounts.go` | `https://www.airwallex.com/docs/api/simulation/linked_accounts.md` |
 | `simulation/payments.go` | `https://www.airwallex.com/docs/api/simulation/payments.md` |
-| `simulation/payouts.go` | `https://www.airwallex.com/docs/api/simulation/payouts.md` |
 | `simulation/rfis.go` | `https://www.airwallex.com/docs/api/simulation/request_for_information_rfi.md` |
 | `simulation/terminals.go` | `https://www.airwallex.com/docs/api/simulation/terminal_simulation.md` |
 | `simulation/transfers.go` | `https://www.airwallex.com/docs/api/simulation/transfers.md` |
@@ -187,4 +186,4 @@ client.Payouts().CreateTransfer(ctx, req, sdk.WithRequestOnBehalfOf("acct_456"))
 
 | Go 文件 | API 端点总览 |
 |---------|-------------|
-| `webhook/endpoint.go` | ⚠️ 待补充（用户直接粘贴 markdown，URL 待确认） |
+| `webhook/endpoint.go` | `https://www.airwallex.com/docs/api/webhooks/webhooks.md` |

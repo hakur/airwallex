@@ -92,7 +92,6 @@
 |------|------|------|------|------|
 | `POST /api/v1/pa/customs_declarations/create` | CreateCustomsDeclaration | customs_declarations.go | TestCustomsDeclarationLifecycle | 🔒 400 |
 | `GET /api/v1/pa/customs_declarations/{id}` | GetCustomsDeclaration | customs_declarations.go | TestCustomsDeclarationLifecycle | 🔒 404 |
-| `GET /api/v1/pa/customs_declarations` | ListCustomsDeclarations | customs_declarations.go | TestCustomsDeclarationLifecycle | 🔒 404 |
 | `POST /api/v1/pa/customs_declarations/{id}/update` | UpdateCustomsDeclaration | customs_declarations.go | TestCustomsDeclarationLifecycle | 🔒 404 |
 | `POST /api/v1/pa/customs_declarations/{id}/redeclare` | RedeclareCustomsDeclaration | customs_declarations.go | TestCustomsDeclarationLifecycle | 🔒 404 |
 | `POST /api/v1/pa/funds_splits/create` | CreateFundsSplit | funds_splits.go | TestFundsSplitLifecycle | 🔒 400 |
@@ -107,13 +106,11 @@
 |------|------|------|------|------|
 | `POST /api/v1/pa/payment_consents/create` | CreatePaymentConsent | payment_consents.go | TestPaymentConsentLifecycle | ✅ PASS |
 | `GET /api/v1/pa/payment_consents/{id}` | GetPaymentConsent | payment_consents.go | TestPaymentConsentLifecycle | ✅ PASS |
-| `POST /api/v1/pa/payment_consents/{id}/cancel` | CancelPaymentConsent | payment_consents.go | TestPaymentConsentLifecycle | 🔒 404 |
 | `GET /api/v1/pa/payment_consents` | ListPaymentConsents | payment_consents.go | TestPaymentConsentLifecycle | ✅ PASS |
 
 ### 结算
 | 端点 | 函数 | Go 文件 | 测试 | 状态 |
 |------|------|------|------|------|
-| `GET /api/v1/pa/settlement_records/{id}` | GetSettlementRecord | settlement_records.go | TestSettlementRecordLifecycle | ✅ PASS |
 | `GET /api/v1/pa/settlement_records` | ListSettlementRecords | settlement_records.go | TestSettlementRecordLifecycle | ✅ PASS |
 
 ---
@@ -365,10 +362,10 @@
 | `POST /api/v1/simulation/deposit/create` | SimulateGlobalAccountDeposit | deposits.go | TestSimulateGlobalAccountDeposit | ✅ PASS |
 | `POST /api/v1/simulation/issuing/cardholders/{id}/pass_review` | SimulateIssuingCardholderPassReview | issuing.go | TestSimulateIssuingCardholderPassReview | 🔒 400 |
 | `POST /api/v1/simulation/issuing/threeds/notify` | SimulateIssuingThreedsNotify | issuing.go | TestSimulateIssuingThreedsNotify | 🔒 500 |
-| `POST /api/v1/simulation/issuing/{id}/capture` | SimulateIssuingTransactionCapture | issuing.go | TestSimulateIssuingTransactionLifecycle | ✅ PASS |
+| `POST /api/v1/simulation/issuing/card_transaction_lifecycles/{id}/capture` | SimulateIssuingTransactionCapture | issuing.go | TestSimulateIssuingTransactionLifecycle | ✅ PASS |
 | `POST /api/v1/simulation/issuing/create` | SimulateIssuingTransactionCreate | issuing.go | TestSimulateIssuingTransactionLifecycle | 🔒 500 |
 | `POST /api/v1/simulation/issuing/refund` | SimulateIssuingTransactionRefund | issuing.go | TestSimulateIssuingTransactionLifecycle | ✅ PASS |
-| `POST /api/v1/simulation/issuing/{id}/reverse` | SimulateIssuingTransactionReverse | issuing.go | TestSimulateIssuingTransactionLifecycle | ✅ PASS |
+| `POST /api/v1/simulation/issuing/card_transaction_lifecycles/{id}/reverse` | SimulateIssuingTransactionReverse | issuing.go | TestSimulateIssuingTransactionLifecycle | ✅ PASS |
 | `POST /api/v1/simulation/linked_accounts/{id}/fail_microdeposits` | SimulateLinkedAccountFailMicrodeposits | linked_accounts.go | TestSimulateLinkedAccountOperations_InvalidID | 🔒 400 |
 | `POST /api/v1/simulation/linked_accounts/{id}/mandate/accept` | SimulateLinkedAccountMandateAccept | linked_accounts.go | TestSimulateLinkedAccountOperations_InvalidID | 🔒 400 |
 | `POST /api/v1/simulation/linked_accounts/{id}/mandate/cancel` | SimulateLinkedAccountMandateCancel | linked_accounts.go | TestSimulateLinkedAccountOperations_InvalidID | 🔒 400 |
@@ -377,7 +374,6 @@
 | `POST /api/v1/simulation/pa/payment_disputes/{id}/escalate` | SimulatePaymentDisputeEscalate | payments.go | TestSimulatePaymentDisputeLifecycle | ✅ PASS |
 | `POST /api/v1/simulation/pa/payment_disputes/{id}/resolve` | SimulatePaymentDisputeResolve | payments.go | TestSimulatePaymentDisputeLifecycle | ✅ PASS |
 | `POST /api/v1/simulation/pa/shopper_actions/{id}` | SimulateShopperAction | payments.go | TestSimulateShopperAction | ✅ PASS |
-| `POST /api/v1/simulation/payments/{id}/transition` | SimulatePayoutPaymentTransition | payouts.go | TestSimulatePayoutPaymentTransition_InvalidID | 🔒 400 |
 | `POST /api/v1/simulation/rfis/{id}/close` | SimulateRFIClose | rfis.go | TestSimulateRFIOperations_InvalidRequests | 🔒 404 |
 | `POST /api/v1/simulation/rfis/create` | SimulateRFICreate | rfis.go | TestSimulateRFIOperations_InvalidRequests | 🔒 400 |
 | `POST /api/v1/simulation/rfis/{id}/follow_up` | SimulateRFIFollowUp | rfis.go | TestSimulateRFIOperations_InvalidRequests | 🔒 400 |
@@ -419,15 +415,11 @@
 | 端点 | 函数 | Go 文件 | 测试 | 状态 |
 |------|------|------|------|------|
 | `POST /api/v1/risk/fraud_feedback/create` | CreateFraudFeedback | fraud_feedback.go | TestFraudFeedbackLifecycle | ✅ PASS |
-| `GET /api/v1/risk/fraud_feedback/{id}` | GetFraudFeedback | fraud_feedback.go | TestFraudFeedbackLifecycle | ✅ PASS |
-| `GET /api/v1/risk/fraud_feedback` | ListFraudFeedback | fraud_feedback.go | TestFraudFeedbackLifecycle | ✅ PASS |
-| `POST /api/v1/rfis/create` | CreateRFI | rfi.go | TestRFILifecycle | 🔒 405 |
 | `GET /api/v1/rfis/{id}` | GetRFI | rfi.go | TestRFILifecycle | ✅ PASS |
 | `GET /api/v1/rfis` | ListRFIs | rfi.go | TestRFILifecycle | ✅ PASS |
 | `POST /api/v1/rfis/{id}/respond` | RespondRFI | rfi.go | TestRFILifecycle | ✅ PASS |
 | `POST /api/v1/sellers/create` | CreateSeller | seller.go | TestSellerLifecycle | 🔒 403 |
 | `GET /api/v1/sellers/{id}` | GetSeller | seller.go | TestSellerLifecycle | ✅ PASS |
-| `GET /api/v1/sellers` | ListSellers | seller.go | TestSellerLifecycle | ✅ PASS |
 | `POST /api/v1/risk/watchlist/create` | CreateWatchlistEntry | watchlist.go | TestWatchlistLifecycle | ✅ PASS |
 | `GET /api/v1/risk/watchlist/{id}` | GetWatchlistEntry | watchlist.go | TestWatchlistLifecycle | ✅ PASS |
 | `GET /api/v1/risk/watchlist` | ListWatchlistEntries | watchlist.go | TestWatchlistLifecycle | ✅ PASS |

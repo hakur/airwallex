@@ -22,7 +22,7 @@ func displayName(s *risk.Seller) string {
 func main() {
 	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, nil)))
 
-	client, err := airwallex.NewFromEnv("../../.env", sdk.WithBaseURL(sdk.SandboxURL))
+	client, err := airwallex.NewFromEnv(sdk.ResolveEnvPath(), sdk.WithBaseURL(sdk.SandboxURL))
 	if err != nil {
 		slog.Error("创建客户端失败", "error", err)
 		os.Exit(1)
@@ -56,16 +56,4 @@ func main() {
 		os.Exit(0)
 	}
 	slog.Info("卖家详情", "id", fetched.ID, "name", displayName(fetched), "status", fetched.Status)
-
-	// 列出所有卖家
-	slog.Info("列出所有卖家...")
-	sellers, err := svc.ListSellers(ctx)
-	if err != nil {
-		slog.Error("列出卖家失败", "error", err)
-		os.Exit(0)
-	}
-	slog.Info("卖家数量", "count", len(sellers.Items))
-	for _, s := range sellers.Items {
-		slog.Info("卖家", "id", s.ID, "name", displayName(&s), "status", s.Status)
-	}
 }

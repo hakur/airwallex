@@ -155,15 +155,6 @@ func (s *Service) GetSeller(ctx context.Context, id string, opts ...sdk.RequestO
 	return &resp, err
 }
 
-// ListSellers lists all sellers.
-// ListSellers 列出卖家。
-// 官方文档: https://www.airwallex.com/docs/api/risk/sellers/list.md
-func (s *Service) ListSellers(ctx context.Context, opts ...sdk.RequestOption) (*sdk.ListResult[Seller], error) {
-	var resp sdk.ListResult[Seller]
-	err := s.doer.Do(ctx, "GET", "/api/v1/sellers", nil, &resp, opts...)
-	return &resp, err
-}
-
 // DeactivateSeller deactivates a seller by ID.
 // DeactivateSeller 根据ID停用卖家。
 // 官方文档: https://www.airwallex.com/docs/api/risk/sellers/deactivate.md

@@ -15,7 +15,7 @@ import (
 func main() {
 	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, nil)))
 
-	client, err := airwallex.NewFromEnv("../../.env",
+	client, err := airwallex.NewFromEnv(sdk.ResolveEnvPath(),
 		sdk.WithBaseURL(sdk.SandboxURL),
 		sdk.WithDebug(true),
 	)
@@ -121,7 +121,7 @@ func main() {
 	slog.Info("注意：请先通过前端 SDK 收集支付方式，或使用 PaymentIntent 保存支付方式")
 	slog.Info("然后替换下方 pm_xxx 为真实的 PaymentMethod ID")
 
-	var consent *pa.PaymentConsent
+	// var consent *pa.PaymentConsent
 	// consent, err = paSvc.CreatePaymentConsent(ctx, &pa.CreatePaymentConsentRequest{
 	// 	CustomerID:      customer.ID,
 	// 	PaymentMethodID: "pm_xxx", // 替换为真实的 PaymentMethod ID
@@ -204,19 +204,6 @@ func main() {
 		} else {
 			slog.Info("订阅已取消", "id", cancelled.ID, "status", cancelled.Status)
 		}
-	}
-
-	// 9. 取消支付授权（解除自动扣款绑定）
-	if consent != nil && consent.ID != "" {
-		slog.Info("9. 取消支付授权...")
-		cancelledConsent, err := paSvc.CancelPaymentConsent(ctx, consent.ID, &pa.CancelPaymentConsentRequest{
-			RequestID: "pc-cancel-" + time.Now().Format("20060102150405"),
-		})
-		if err != nil {
-			slog.Error("取消支付授权失败", "error", err)
-			os.Exit(1)
-		}
-		slog.Info("支付授权已取消", "id", cancelledConsent.ID, "status", cancelledConsent.Status)
 	}
 
 	slog.Info("=== 流程完成 ===")

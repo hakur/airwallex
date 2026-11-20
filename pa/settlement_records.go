@@ -153,15 +153,6 @@ type ListSettlementRecordsRequest struct {
 	SettlementID string `json:"-"`
 }
 
-// GetSettlementRecord retrieves a settlement record by ID.
-// GetSettlementRecord 根据 ID 获取结算记录。
-// 官方文档: https://www.airwallex.com/docs/api/payments/settlement_records/retrieve.md
-func (s *Service) GetSettlementRecord(ctx context.Context, id string, opts ...sdk.RequestOption) (*SettlementRecord, error) {
-	var resp SettlementRecord
-	err := s.doer.Do(ctx, "GET", "/api/v1/pa/settlement_records/"+id, nil, &resp, opts...)
-	return &resp, err
-}
-
 // ListSettlementRecords lists settlement records.
 // ListSettlementRecords 列出结算记录。
 // 官方文档: https://www.airwallex.com/docs/api/payments/settlement_records/list.md

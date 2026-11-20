@@ -87,7 +87,7 @@ type ListWebhooksResponse struct {
 
 // CreateWebhook creates a webhook.
 // CreateWebhook 创建 webhook。
-// 官方文档: https://www.airwallex.com/docs/api/webhook/webhooks/create.md
+// 官方文档: https://www.airwallex.com/docs/api/webhooks/webhooks/create.md
 func (s *Service) CreateWebhook(ctx context.Context, req *CreateWebhookRequest, opts ...sdk.RequestOption) (*Webhook, error) {
 	var resp Webhook
 	err := s.doer.Do(ctx, "POST", "/api/v1/webhooks/create", req, &resp, opts...)
@@ -96,7 +96,7 @@ func (s *Service) CreateWebhook(ctx context.Context, req *CreateWebhookRequest, 
 
 // GetWebhook retrieves a webhook by ID.
 // GetWebhook 根据 ID 获取 webhook。
-// 官方文档: https://www.airwallex.com/docs/api/webhook/webhooks/retrieve.md
+// 官方文档: https://www.airwallex.com/docs/api/webhooks/webhooks/retrieve.md
 func (s *Service) GetWebhook(ctx context.Context, id string, opts ...sdk.RequestOption) (*Webhook, error) {
 	var resp Webhook
 	err := s.doer.Do(ctx, "GET", "/api/v1/webhooks/"+id, nil, &resp, opts...)
@@ -105,7 +105,7 @@ func (s *Service) GetWebhook(ctx context.Context, id string, opts ...sdk.Request
 
 // UpdateWebhook updates a webhook (only URL can be updated).
 // UpdateWebhook 更新 webhook（仅 URL 可更新）。
-// 官方文档: https://www.airwallex.com/docs/api/webhook/webhooks/update.md
+// 官方文档: https://www.airwallex.com/docs/api/webhooks/webhooks/update.md
 func (s *Service) UpdateWebhook(ctx context.Context, id string, req *UpdateWebhookRequest, opts ...sdk.RequestOption) (*Webhook, error) {
 	var resp Webhook
 	err := s.doer.Do(ctx, "POST", "/api/v1/webhooks/"+id+"/update", req, &resp, opts...)
@@ -114,7 +114,7 @@ func (s *Service) UpdateWebhook(ctx context.Context, id string, req *UpdateWebho
 
 // DeleteWebhook deletes a webhook.
 // DeleteWebhook 删除 webhook。
-// 官方文档: https://www.airwallex.com/docs/api/webhook/webhooks/delete.md
+// 官方文档: https://www.airwallex.com/docs/api/webhooks/webhooks/delete.md
 func (s *Service) DeleteWebhook(ctx context.Context, id string, opts ...sdk.RequestOption) (*DeleteWebhookResponse, error) {
 	var resp DeleteWebhookResponse
 	err := s.doer.Do(ctx, "POST", "/api/v1/webhooks/"+id+"/delete", nil, &resp, opts...)
@@ -123,7 +123,7 @@ func (s *Service) DeleteWebhook(ctx context.Context, id string, opts ...sdk.Requ
 
 // ListWebhooks lists webhooks.
 // ListWebhooks 列出 webhook。
-// 官方文档: https://www.airwallex.com/docs/api/webhook/webhooks/list.md
+// 官方文档: https://www.airwallex.com/docs/api/webhooks/webhooks/list.md
 func (s *Service) ListWebhooks(ctx context.Context, req *ListWebhooksRequest, opts ...sdk.RequestOption) (*ListWebhooksResponse, error) {
 	var resp ListWebhooksResponse
 	err := s.doer.Do(ctx, "GET", "/api/v1/webhooks", req, &resp, opts...)
